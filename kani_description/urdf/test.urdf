@@ -1,0 +1,30 @@
+<robot name="4WDSR">
+
+
+<link name="base"/>
+<link name="wheel-lf"/>
+<link name="wheel-rf"/>
+<link name="wheel-lb"/>
+<link name="wheel-rb"/>
+
+<joint name="joint-lf" type="continuous">
+<parent link="base"/>
+<child link="wheel-lf"/>
+</joint>
+
+<joint name="joint-rf" type="continuous">
+<parent link="base"/>
+<child link="wheel-rf"/>
+</joint>
+
+<joint name="joint-lb" type="continuous">
+<parent link="base"/>
+<child link="wheel-lb"/>
+</joint>
+
+<joint name="joint-rb" type="continuous">
+<parent link="base"/>
+<child link="wheel-rb"/>
+</joint>
+
+</robot>
