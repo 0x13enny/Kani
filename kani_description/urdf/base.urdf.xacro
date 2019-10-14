@@ -4,7 +4,7 @@
 
   <xacro:property name="pi" value="3.1415926535897931" />
 
-  <xacro:macro name="base">
+  <xacro:macro name="kani_base">
     <link name="base_footprint">
       <visual>
         <origin xyz="0 0 0" rpy="0 0 0"/>
@@ -59,7 +59,6 @@
 	</collision>	 
     </link>
   </xacro:macro>
-  <xacro:base/>
 	
 
 

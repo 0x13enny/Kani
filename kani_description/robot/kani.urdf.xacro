@@ -3,5 +3,5 @@
 
   <xacro:include filename="$(find kani_description)/urdf/base.urdf.xacro"/>
 
-  <xacro:base/>
+  <xacro:kani_base/>
 </robot>
