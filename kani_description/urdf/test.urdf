@@ -1,11 +1,41 @@
 <robot name="4WDSR">
 
 
-<link name="base"/>
-<link name="wheel-lf"/>
-<link name="wheel-rf"/>
-<link name="wheel-lb"/>
-<link name="wheel-rb"/>
+<link name="base">
+    <visual>
+      <geometry>
+        <cylinder length="0.6" radius="0.2"/>
+      </geometry>
+    </visual>
+</link>
+<link name="wheel-lf">
+    <visual>
+      <geometry>
+        <cylinder length="0.6" radius="0.2"/>
+      </geometry>
+    </visual>
+</link>
+<link name="wheel-rf">
+    <visual>
+      <geometry>
+        <cylinder length="0.6" radius="0.2"/>
+      </geometry>
+    </visual>
+</link>
+<link name="wheel-lb">
+    <visual>
+      <geometry>
+        <cylinder length="0.6" radius="0.2"/>
+      </geometry>
+    </visual>
+</link>
+<link name="wheel-rb">
+    <visual>
+      <geometry>
+        <cylinder length="0.6" radius="0.2"/>
+      </geometry>
+    </visual>
+</link>
 
 <joint name="joint-lf" type="continuous">
 <parent link="base"/>
@@ -26,5 +56,6 @@
 <parent link="base"/>
 <child link="wheel-rb"/>
 </joint>
+
 
 </robot>

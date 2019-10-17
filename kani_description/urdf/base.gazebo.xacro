@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<!-- Extensions -->
+
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+  <!-- Base -->
+  <xacro:macro name="kani_base_gazebo">
+    <gazebo reference="base_link">
+      <material>Gazebo/White</material>
+      <mu1 value="0.0"/>
+      <mu2 value="0.0"/>
+      <kp value="1000000.0"/>
+      <kd value="1.0"/>
+    </gazebo>
+  </xacro:macro>
+
+  <!-- wheels -->
+  <xacro:macro name="kani_wheel_gazebo" params="link_name">
+    <gazebo reference="${link_name}">
+      <material>Gazebo/Black</material>
+      <mu1 value="100.0"/>
+      <mu2 value="100.0"/>
+      <kp value="1000000.0"/>
+      <kd value="1.0"/>
+      <fdir1 value="1 0 0"/>
+      <dampingFactor value="0.1"/>
+    </gazebo>
+  </xacro:macro>
+
+  <xacro:macro name="kani_steer_gazebo" params="link_name">
+    <gazebo reference="${link_name}">
+      <material>Gazebo/Red</material>
+      <!-- fix below params -->
+      <mu1 value="100.0"/>  
+      <mu2 value="100.0"/>
+      <kp value="1000000.0" />
+      <kd value="1.0" />
+      <fdir1 value="1 0 0"/>
+      <dampingFactor value="0.1"/>
+      <!-- fix above params -->
+    </gazebo>
+  </xacro:macro>
+  
+</robot>

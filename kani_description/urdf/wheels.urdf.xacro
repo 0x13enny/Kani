@@ -1,0 +1,122 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <xacro:include filename="$(find kani_description)/urdf/base.transmission.xacro"/>
+  <xacro:include filename="$(find kani_description)/urdf/base.gazebo.xacro" />
+
+  <xacro:property name="pi" value="3.1415926535897931" />
+  <xacro:property name="wheel_mesh" value="package://kani_description/STL/wheel_link.stl" />
+  <xacro:property name="steer_mesh" value="package://kani_description/STL/steer_link.stl" />
+
+  <xacro:macro name="wheel" params="parent x y z wheel_name">
+    <link name="${wheel_name}_wheel_link">
+      <inertial>
+        <origin
+          xyz="0 0 0"
+          rpy="0 0 0" /><!--0.00222524026865972 0.173009757872407 -0.000157420245397055-->
+        <mass
+          value="0.0963917377366023" />
+        <inertia
+          ixx="0.232225456967381"
+          ixy="0.0"
+          ixz="0.0"
+          iyy="0.232225456967381"
+          iyz="0.0"
+          izz="0.232225456967381" />
+      </inertial>
+      <visual>
+        <origin
+          xyz="0 0 0"
+          rpy="0 0 0" />
+        <geometry>
+          <mesh
+            filename="${wheel_mesh}" />
+        </geometry>
+        <material
+          name="black">
+        </material>
+      </visual>
+      <collision>
+        <origin
+          xyz="0 0 0"
+          rpy="0 0 0" />
+        <geometry>
+          <mesh
+            filename="${wheel_mesh}" />
+        </geometry>
+      </collision>
+    </link>
+    <joint
+      name="${wheel_name}_wheel_joint"
+      type="continuous">
+      <origin
+        xyz= "${x} ${y} ${z}" 
+        rpy="0 0 0" /> <!-- xyz= "0.0600000000000003 -0.178955289353836 -0.0124450740677247" -->
+      <parent
+        link="${parent}" />
+      <child
+        link="${wheel_name}_wheel_link" />
+      <axis
+        xyz="0 1 0" />
+    </joint>
+    <!-- Extensions -->
+    <xacro:kani_wheel_gazebo link_name="${wheel_name}_wheel_link"/>
+    <xacro:kani_wheel_trans joint_name="${wheel_name}_wheel_joint"/>
+  </xacro:macro>
+
+  <xacro:macro name="steer" params="parent x y z steer_name">
+    <link name="${steer_name}_steer_link">
+      <inertial>
+        <origin
+          xyz="0 0 0"
+          rpy="0 0 0" /><!--0.00222524026865972 0.173009757872407 -0.000157420245397055-->
+        <mass
+          value="0.0963917377366023" />
+        <inertia
+          ixx="0.232225456967381"
+          ixy="0.0"
+          ixz="0.0"
+          iyy="0.232225456967381"
+          iyz="0.0"
+          izz="0.232225456967381" />
+      </inertial>
+      <visual>
+        <origin
+          xyz="0 0 0"
+          rpy="0 0 0" />
+        <geometry>
+          <mesh
+            filename="${steer_mesh}" />
+        </geometry>
+        <material
+          name="black">
+        </material>
+      </visual>
+      <collision>
+        <origin
+          xyz="0 0 0"
+          rpy="0 0 0" />
+        <geometry>
+          <mesh
+            filename="${steer_mesh}" />
+        </geometry>
+      </collision>
+    </link>
+    <joint
+      name="${steer_name}_steer_joint"
+      type="continuous">
+      <origin
+        xyz= "${x} ${y} ${z}" 
+        rpy="0 0 0" /> <!-- xyz= "0.0600000000000003 -0.178955289353836 -0.0124450740677247" -->
+      <parent
+        link="${parent}" />
+      <child
+        link="${steer_name}_steer_link" />
+      <axis
+        xyz="0 1 0" />
+    </joint>
+    <!-- Extensions -->
+    <xacro:kani_steer_gazebo link_name="${steer_name}_steer_link"/>
+    <xacro:kani_steer_trans joint_name="${steer_name}_steer_joint"/>
+  </xacro:macro>
+
+</robot>
