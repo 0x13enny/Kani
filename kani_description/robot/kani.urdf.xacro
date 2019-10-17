@@ -1,7 +1,0 @@
-<?xml version="1.0"?>
-<robot name="kani" xmlns:xacro="http://www.ros.org/wiki/xacro">
-
-  <xacro:include filename="$(find kani_description)/urdf/base.urdf.xacro"/>
-
-  <xacro:kani_base/>
-</robot>
