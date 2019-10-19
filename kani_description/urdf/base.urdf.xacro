@@ -3,7 +3,6 @@
   <!-- <xacro:include filename="$(find kani_description)/urdf/base.transmission.xacro"/> -->
   <!-- <xacro:include filename="$(find kani_description)/urdf/base.gazebo.xacro" /> -->
 
-  <xacro:property name="pi" value="3.1415926535897931" />
 
   <xacro:macro name="kani_base">
     <link name="base_footprint">
@@ -24,7 +23,7 @@
     <link name="base_link">
       <inertial>
         <origin
-          xyz="0.0 0.0 0.0"
+          xyz="0.0 0.0 0.06"
           rpy="0 0 0"/>
         <mass 
           value="0.05"/>
@@ -38,22 +37,22 @@
       </inertial>
       <visual>
         <origin
-          xyz="0 0 0"
-          rpy="${-pi / 2} 0 0"/>
+          xyz="-0.125 -0.1 0.05"
+          rpy="${pi/2} 0 ${pi/2}"/>
         <geometry>
           <mesh
-            filename="package://kani_description/STL/base.stl"/>
+            filename="package://kani_description/meshes/base.stl"/>
         </geometry>
         <!-- <material>
         </material> -->
       </visual>
       <collision>
         <origin
-          xyz="0 0 0"
+          xyz="-0.1 -0.125 0.06"
           rpy="0 0 0"/>
         <geometry>
           <mesh
-            filename="package://kani_description/STL/base.stl"/>
+            filename="package://kani_description/meshes/base.stl"/>
         </geometry>
         <!-- <material>
         </material> -->

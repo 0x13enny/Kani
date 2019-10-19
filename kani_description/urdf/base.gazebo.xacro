@@ -29,14 +29,14 @@
   <xacro:macro name="kani_steer_gazebo" params="link_name">
     <gazebo reference="${link_name}">
       <material>Gazebo/Red</material>
-      <!-- fix below params -->
+      <!-- fix below params?-->
       <mu1 value="100.0"/>  
       <mu2 value="100.0"/>
       <kp value="1000000.0" />
       <kd value="1.0" />
       <fdir1 value="1 0 0"/>
       <dampingFactor value="0.1"/>
-      <!-- fix above params -->
+      <!-- fix above params? -->
     </gazebo>
   </xacro:macro>
   

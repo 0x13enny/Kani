@@ -6,30 +6,8 @@
 <robot name="kani" xmlns:xacro="http://www.ros.org/wiki/xacro">
   <!-- <xacro:include filename="$(find kani_description)/urdf/base.transmission.xacro"/> -->
   <!-- <xacro:include filename="$(find kani_description)/urdf/base.gazebo.xacro" /> -->
-  <!-- <xacro:macro name="kani_lwheel_trans">
-    <transmission name="lwheel_trans" type="SimpleTransmission">
-      <type>transmission_interface/SimpleTransmission</type>
-      <joint name="lwheel_joint">
-        <hardwareInterface>VelocityJointInterface</hardwareInterface>
-      </joint>
-      <actuator name="lwheel_motor">
-        <mechanicalReduction>1</mechanicalReduction>
-        <hardwareInterface>VelocityJointInterface</hardwareInterface>
-      </actuator>
-    </transmission>
-  </xacro:macro> -->
-  <!-- 
-  <xacro:macro name="kani_lwheel_gazebo">
-    <gazebo reference="left_wheel">
-      <material>Gazebo/Black</material>
-      <mu1 value="100.0"/>
-      <mu2 value="100.0"/>
-      <kp value="1000000.0" />
-      <kd value="1.0" />
-      <fdir1 value="1 0 0"/>
-      <dampingFactor value="0.1"/>
-    </gazebo>
-  </xacro:macro> -->
+  <!-- <xacro:property name="steer_eff" value="" />
+  <xacro:property name="steer_vel" value="" /> -->
   <link name="base_footprint">
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
@@ -45,22 +23,22 @@
   </joint>
   <link name="base_link">
     <inertial>
-      <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+      <origin rpy="0 0 0" xyz="0.0 0.0 0.06"/>
       <mass value="0.05"/>
       <inertia ixx="0.2" ixy="0" ixz="0" iyy="0.2" iyz="0" izz="0.2"/>
     </inertial>
     <visual>
-      <origin rpy="-1.57079632679 0 0" xyz="0 0 0"/>
+      <origin rpy="1.57079632679 0 1.57079632679" xyz="-0.125 -0.1 0.05"/>
       <geometry>
-        <mesh filename="package://kani_description/STL/base.stl"/>
+        <mesh filename="package://kani_description/meshes/base.stl"/>
       </geometry>
       <!-- <material>
         </material> -->
     </visual>
     <collision>
-      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <origin rpy="0 0 0" xyz="-0.1 -0.125 0.06"/>
       <geometry>
-        <mesh filename="package://kani_description/STL/base.stl"/>
+        <mesh filename="package://kani_description/meshes/base.stl"/>
       </geometry>
       <!-- <material>
         </material> -->
@@ -74,7 +52,58 @@
   <!-- <xacro:hokuyo_utm30lx_back name="hokuyo_back" parent="base_link"/> -->
   <!-- Extensions -->
   <!-- <xacro:kani_base_gazebo/> -->
-  <link name="rightFront_link">
+  <link name="rightFront_steer_link">
+    <inertial>
+      <origin rpy="1.57079632679 0 3.14159265359" xyz="0 0 0"/>
+      <!--0.00222524026865972 0.173009757872407 -0.000157420245397055-->
+      <mass value="0.0963917377366023"/>
+      <inertia ixx="0.232225456967381" ixy="0.0" ixz="0.0" iyy="0.232225456967381" iyz="0.0" izz="0.232225456967381"/>
+    </inertial>
+    <visual>
+      <origin rpy="1.57079632679 0 3.14159265359" xyz="0.013 -0.01 0"/>
+      <geometry>
+        <mesh filename="package://kani_description/meshes/steer2.stl"/>
+      </geometry>
+      <material name="black">
+        </material>
+    </visual>
+    <collision>
+      <origin rpy="1.57079632679 0 3.14159265359" xyz="0.013 -0.01 0"/>
+      <geometry>
+        <mesh filename="package://kani_description/meshes/steer2.stl"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="rightFront_steer_joint" type="revolute">
+    <origin rpy="0 0 0" xyz="0.092 -0.088 0"/>
+    <!-- xyz= "0.0600000000000003 -0.178955289353836 -0.0124450740677247" -->
+    <parent link="base_link"/>
+    <child link="rightFront_steer_link"/>
+    <axis xyz="0 0 1"/>
+    <limit effort="500" lower="-1.57079632679" upper="1.57079632679" velocity="500"/>
+  </joint>
+  <gazebo reference="rightFront_steer_link">
+    <material>Gazebo/Red</material>
+    <!-- fix below params?-->
+    <mu1 value="100.0"/>
+    <mu2 value="100.0"/>
+    <kp value="1000000.0"/>
+    <kd value="1.0"/>
+    <fdir1 value="1 0 0"/>
+    <dampingFactor value="0.1"/>
+    <!-- fix above params? -->
+  </gazebo>
+  <transmission name="rightFront_steer_joint_trans" type="SimpleTransmission">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="rightFront_steer_joint">
+      <hardwareInterface>PositionJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="rightFront_steer_joint_steer_motor">
+      <mechanicalReduction>1</mechanicalReduction>
+      <hardwareInterface>PositionJointInterface</hardwareInterface>
+    </actuator>
+  </transmission>
+  <link name="leftFront_steer_link">
     <inertial>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <!--0.00222524026865972 0.173009757872407 -0.000157420245397055-->
@@ -82,28 +111,181 @@
       <inertia ixx="0.232225456967381" ixy="0.0" ixz="0.0" iyy="0.232225456967381" iyz="0.0" izz="0.232225456967381"/>
     </inertial>
     <visual>
-      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <origin rpy="1.57079632679 0 3.14159265359" xyz="0.013 -0.047 0"/>
       <geometry>
-        <mesh filename="package://kani_description/STL/wheel_link.stl"/>
+        <mesh filename="package://kani_description/meshes/steer2_m.stl"/>
       </geometry>
       <material name="black">
         </material>
     </visual>
     <collision>
-      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <origin rpy="1.57079632679 0 3.14159265359" xyz="0.013 -0.047 0"/>
       <geometry>
-        <mesh filename="package://kani_description/STL/wheel_link.stl"/>
+        <mesh filename="package://kani_description/meshes/steer2_m.stl"/>
       </geometry>
     </collision>
   </link>
-  <joint name="rightFront_joint" type="continuous">
-    <origin rpy="0 0 0" xyz="0 0 0"/>
+  <joint name="leftFront_steer_joint" type="revolute">
+    <origin rpy="0 0 0" xyz="0.092 0.088 0"/>
     <!-- xyz= "0.0600000000000003 -0.178955289353836 -0.0124450740677247" -->
     <parent link="base_link"/>
-    <child link="rightFront_link"/>
+    <child link="leftFront_steer_link"/>
+    <axis xyz="0 0 1"/>
+    <limit effort="500" lower="-1.57079632679" upper="1.57079632679" velocity="500"/>
+  </joint>
+  <gazebo reference="leftFront_steer_link">
+    <material>Gazebo/Red</material>
+    <!-- fix below params?-->
+    <mu1 value="100.0"/>
+    <mu2 value="100.0"/>
+    <kp value="1000000.0"/>
+    <kd value="1.0"/>
+    <fdir1 value="1 0 0"/>
+    <dampingFactor value="0.1"/>
+    <!-- fix above params? -->
+  </gazebo>
+  <transmission name="leftFront_steer_joint_trans" type="SimpleTransmission">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="leftFront_steer_joint">
+      <hardwareInterface>PositionJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="leftFront_steer_joint_steer_motor">
+      <mechanicalReduction>1</mechanicalReduction>
+      <hardwareInterface>PositionJointInterface</hardwareInterface>
+    </actuator>
+  </transmission>
+  <link name="rightBack_steer_link">
+    <inertial>
+      <origin rpy="1.57079632679 0 0" xyz="0 0 0"/>
+      <!--0.00222524026865972 0.173009757872407 -0.000157420245397055-->
+      <mass value="0.0963917377366023"/>
+      <inertia ixx="0.232225456967381" ixy="0.0" ixz="0.0" iyy="0.232225456967381" iyz="0.0" izz="0.232225456967381"/>
+    </inertial>
+    <visual>
+      <origin rpy="1.57079632679 0 0" xyz="-0.013 0.047 0"/>
+      <geometry>
+        <mesh filename="package://kani_description/meshes/steer2_m.stl"/>
+      </geometry>
+      <material name="black">
+        </material>
+    </visual>
+    <collision>
+      <origin rpy="1.57079632679 0 0" xyz="-0.013 0.047 0"/>
+      <geometry>
+        <mesh filename="package://kani_description/meshes/steer2_m.stl"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="rightBack_steer_joint" type="revolute">
+    <origin rpy="0 0 0" xyz="-0.092 -0.088 0"/>
+    <!-- xyz= "0.0600000000000003 -0.178955289353836 -0.0124450740677247" -->
+    <parent link="base_link"/>
+    <child link="rightBack_steer_link"/>
+    <axis xyz="0 0 1"/>
+    <limit effort="500" lower="-1.57079632679" upper="1.57079632679" velocity="500"/>
+  </joint>
+  <gazebo reference="rightBack_steer_link">
+    <material>Gazebo/Red</material>
+    <!-- fix below params?-->
+    <mu1 value="100.0"/>
+    <mu2 value="100.0"/>
+    <kp value="1000000.0"/>
+    <kd value="1.0"/>
+    <fdir1 value="1 0 0"/>
+    <dampingFactor value="0.1"/>
+    <!-- fix above params? -->
+  </gazebo>
+  <transmission name="rightBack_steer_joint_trans" type="SimpleTransmission">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="rightBack_steer_joint">
+      <hardwareInterface>PositionJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="rightBack_steer_joint_steer_motor">
+      <mechanicalReduction>1</mechanicalReduction>
+      <hardwareInterface>PositionJointInterface</hardwareInterface>
+    </actuator>
+  </transmission>
+  <link name="leftBack_steer_link">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <!--0.00222524026865972 0.173009757872407 -0.000157420245397055-->
+      <mass value="0.0963917377366023"/>
+      <inertia ixx="0.232225456967381" ixy="0.0" ixz="0.0" iyy="0.232225456967381" iyz="0.0" izz="0.232225456967381"/>
+    </inertial>
+    <visual>
+      <origin rpy="1.57079632679 0 0" xyz="-0.013 0.01 0"/>
+      <geometry>
+        <mesh filename="package://kani_description/meshes/steer2.stl"/>
+      </geometry>
+      <material name="black">
+        </material>
+    </visual>
+    <collision>
+      <origin rpy="1.57079632679 0 0" xyz="-0.013 0.01 0"/>
+      <geometry>
+        <mesh filename="package://kani_description/meshes/steer2.stl"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="leftBack_steer_joint" type="revolute">
+    <origin rpy="0 0 0" xyz="-0.092 0.088 0"/>
+    <!-- xyz= "0.0600000000000003 -0.178955289353836 -0.0124450740677247" -->
+    <parent link="base_link"/>
+    <child link="leftBack_steer_link"/>
+    <axis xyz="0 0 1"/>
+    <limit effort="500" lower="-1.57079632679" upper="1.57079632679" velocity="500"/>
+  </joint>
+  <gazebo reference="leftBack_steer_link">
+    <material>Gazebo/Red</material>
+    <!-- fix below params?-->
+    <mu1 value="100.0"/>
+    <mu2 value="100.0"/>
+    <kp value="1000000.0"/>
+    <kd value="1.0"/>
+    <fdir1 value="1 0 0"/>
+    <dampingFactor value="0.1"/>
+    <!-- fix above params? -->
+  </gazebo>
+  <transmission name="leftBack_steer_joint_trans" type="SimpleTransmission">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="leftBack_steer_joint">
+      <hardwareInterface>PositionJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="leftBack_steer_joint_steer_motor">
+      <mechanicalReduction>1</mechanicalReduction>
+      <hardwareInterface>PositionJointInterface</hardwareInterface>
+    </actuator>
+  </transmission>
+  <link name="rightFront_wheel_link">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <!--0.00222524026865972 0.173009757872407 -0.000157420245397055-->
+      <mass value="0.0963917377366023"/>
+      <inertia ixx="0.232225456967381" ixy="0.0" ixz="0.0" iyy="0.232225456967381" iyz="0.0" izz="0.232225456967381"/>
+    </inertial>
+    <visual>
+      <origin rpy="1.57079632679 0 0" xyz="-0.0333333333333 0 -0.0333333333333"/>
+      <geometry>
+        <mesh filename="package://kani_description/meshes/wheel.stl"/>
+      </geometry>
+      <material name="black">
+        </material>
+    </visual>
+    <collision>
+      <origin rpy="1.57079632679 0 0" xyz="-0.0333333333333 0 -0.0333333333333"/>
+      <geometry>
+        <mesh filename="package://kani_description/meshes/wheel.stl"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="rightFront_wheel_joint" type="continuous">
+    <origin rpy="0 0 0" xyz="0 0 0.01"/>
+    <!-- xyz= "0.0600000000000003 -0.178955289353836 -0.0124450740677247" -->
+    <parent link="rightFront_steer_link"/>
+    <child link="rightFront_wheel_link"/>
     <axis xyz="0 1 0"/>
   </joint>
-  <gazebo reference="rightFront">
+  <gazebo reference="rightFront_wheel_link">
     <material>Gazebo/Black</material>
     <mu1 value="100.0"/>
     <mu2 value="100.0"/>
@@ -112,17 +294,17 @@
     <fdir1 value="1 0 0"/>
     <dampingFactor value="0.1"/>
   </gazebo>
-  <transmission name="rightFront" type="SimpleTransmission">
+  <transmission name="rightFront_wheel_joint_trans" type="SimpleTransmission">
     <type>transmission_interface/SimpleTransmission</type>
-    <joint name="rightFront_joint">
+    <joint name="rightFront_wheel_joint">
       <hardwareInterface>VelocityJointInterface</hardwareInterface>
     </joint>
-    <actuator name="rightFront_motor">
+    <actuator name="rightFront_wheel_joint_wheel_motor">
       <mechanicalReduction>1</mechanicalReduction>
       <hardwareInterface>VelocityJointInterface</hardwareInterface>
     </actuator>
   </transmission>
-  <link name="leftFront_link">
+  <link name="leftFront_wheel_link">
     <inertial>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <!--0.00222524026865972 0.173009757872407 -0.000157420245397055-->
@@ -130,28 +312,28 @@
       <inertia ixx="0.232225456967381" ixy="0.0" ixz="0.0" iyy="0.232225456967381" iyz="0.0" izz="0.232225456967381"/>
     </inertial>
     <visual>
-      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <origin rpy="-1.57079632679 0 0" xyz="-0.0333333333333 0 0.0333333333333"/>
       <geometry>
-        <mesh filename="package://kani_description/STL/wheel_link.stl"/>
+        <mesh filename="package://kani_description/meshes/wheel.stl"/>
       </geometry>
       <material name="black">
         </material>
     </visual>
     <collision>
-      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <origin rpy="-1.57079632679 0 0" xyz="-0.0333333333333 0 0.0333333333333"/>
       <geometry>
-        <mesh filename="package://kani_description/STL/wheel_link.stl"/>
+        <mesh filename="package://kani_description/meshes/wheel.stl"/>
       </geometry>
     </collision>
   </link>
-  <joint name="leftFront_joint" type="continuous">
-    <origin rpy="0 0 0" xyz="10 10 0"/>
+  <joint name="leftFront_wheel_joint" type="continuous">
+    <origin rpy="0 0 0" xyz="0 0 0.005"/>
     <!-- xyz= "0.0600000000000003 -0.178955289353836 -0.0124450740677247" -->
-    <parent link="base_link"/>
-    <child link="leftFront_link"/>
+    <parent link="leftFront_steer_link"/>
+    <child link="leftFront_wheel_link"/>
     <axis xyz="0 1 0"/>
   </joint>
-  <gazebo reference="leftFront">
+  <gazebo reference="leftFront_wheel_link">
     <material>Gazebo/Black</material>
     <mu1 value="100.0"/>
     <mu2 value="100.0"/>
@@ -160,12 +342,108 @@
     <fdir1 value="1 0 0"/>
     <dampingFactor value="0.1"/>
   </gazebo>
-  <transmission name="leftFront" type="SimpleTransmission">
+  <transmission name="leftFront_wheel_joint_trans" type="SimpleTransmission">
     <type>transmission_interface/SimpleTransmission</type>
-    <joint name="leftFront_joint">
+    <joint name="leftFront_wheel_joint">
       <hardwareInterface>VelocityJointInterface</hardwareInterface>
     </joint>
-    <actuator name="leftFront_motor">
+    <actuator name="leftFront_wheel_joint_wheel_motor">
+      <mechanicalReduction>1</mechanicalReduction>
+      <hardwareInterface>VelocityJointInterface</hardwareInterface>
+    </actuator>
+  </transmission>
+  <link name="rightBack_wheel_link">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <!--0.00222524026865972 0.173009757872407 -0.000157420245397055-->
+      <mass value="0.0963917377366023"/>
+      <inertia ixx="0.232225456967381" ixy="0.0" ixz="0.0" iyy="0.232225456967381" iyz="0.0" izz="0.232225456967381"/>
+    </inertial>
+    <visual>
+      <origin rpy="1.57079632679 0 0" xyz="-0.0333333333333 0 -0.0333333333333"/>
+      <geometry>
+        <mesh filename="package://kani_description/meshes/wheel.stl"/>
+      </geometry>
+      <material name="black">
+        </material>
+    </visual>
+    <collision>
+      <origin rpy="1.57079632679 0 0" xyz="-0.0333333333333 0 -0.0333333333333"/>
+      <geometry>
+        <mesh filename="package://kani_description/meshes/wheel.stl"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="rightBack_wheel_joint" type="continuous">
+    <origin rpy="0 0 0" xyz="0 0 0.015"/>
+    <!-- xyz= "0.0600000000000003 -0.178955289353836 -0.0124450740677247" -->
+    <parent link="rightBack_steer_link"/>
+    <child link="rightBack_wheel_link"/>
+    <axis xyz="0 1 0"/>
+  </joint>
+  <gazebo reference="rightBack_wheel_link">
+    <material>Gazebo/Black</material>
+    <mu1 value="100.0"/>
+    <mu2 value="100.0"/>
+    <kp value="1000000.0"/>
+    <kd value="1.0"/>
+    <fdir1 value="1 0 0"/>
+    <dampingFactor value="0.1"/>
+  </gazebo>
+  <transmission name="rightBack_wheel_joint_trans" type="SimpleTransmission">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="rightBack_wheel_joint">
+      <hardwareInterface>VelocityJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="rightBack_wheel_joint_wheel_motor">
+      <mechanicalReduction>1</mechanicalReduction>
+      <hardwareInterface>VelocityJointInterface</hardwareInterface>
+    </actuator>
+  </transmission>
+  <link name="leftBack_wheel_link">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <!--0.00222524026865972 0.173009757872407 -0.000157420245397055-->
+      <mass value="0.0963917377366023"/>
+      <inertia ixx="0.232225456967381" ixy="0.0" ixz="0.0" iyy="0.232225456967381" iyz="0.0" izz="0.232225456967381"/>
+    </inertial>
+    <visual>
+      <origin rpy="-1.57079632679 0 0" xyz="-0.0333333333333 0 0.0333333333333"/>
+      <geometry>
+        <mesh filename="package://kani_description/meshes/wheel.stl"/>
+      </geometry>
+      <material name="black">
+        </material>
+    </visual>
+    <collision>
+      <origin rpy="-1.57079632679 0 0" xyz="-0.0333333333333 0 0.0333333333333"/>
+      <geometry>
+        <mesh filename="package://kani_description/meshes/wheel.stl"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="leftBack_wheel_joint" type="continuous">
+    <origin rpy="0 0 0" xyz="0 0 0"/>
+    <!-- xyz= "0.0600000000000003 -0.178955289353836 -0.0124450740677247" -->
+    <parent link="leftBack_steer_link"/>
+    <child link="leftBack_wheel_link"/>
+    <axis xyz="0 1 0"/>
+  </joint>
+  <gazebo reference="leftBack_wheel_link">
+    <material>Gazebo/Black</material>
+    <mu1 value="100.0"/>
+    <mu2 value="100.0"/>
+    <kp value="1000000.0"/>
+    <kd value="1.0"/>
+    <fdir1 value="1 0 0"/>
+    <dampingFactor value="0.1"/>
+  </gazebo>
+  <transmission name="leftBack_wheel_joint_trans" type="SimpleTransmission">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="leftBack_wheel_joint">
+      <hardwareInterface>VelocityJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="leftBack_wheel_joint_wheel_motor">
       <mechanicalReduction>1</mechanicalReduction>
       <hardwareInterface>VelocityJointInterface</hardwareInterface>
     </actuator>

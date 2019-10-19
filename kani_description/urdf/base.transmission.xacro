@@ -4,12 +4,12 @@
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
   <!-- wheel transmission -->
   <xacro:macro name="kani_wheel_trans" params="joint_name">
-    <transmission name="${wheel_name}" type="SimpleTransmission">
+    <transmission name="${joint_name}_trans" type="SimpleTransmission">
       <type>transmission_interface/SimpleTransmission</type>
       <joint name="${joint_name}">
         <hardwareInterface>VelocityJointInterface</hardwareInterface>
       </joint>
-      <actuator name="${wheel_name}_wheel_motor">
+      <actuator name="${joint_name}_wheel_motor">
         <mechanicalReduction>1</mechanicalReduction>
         <hardwareInterface>VelocityJointInterface</hardwareInterface>
       </actuator>
@@ -17,12 +17,12 @@
   </xacro:macro>
 
   <xacro:macro name="kani_steer_trans" params="joint_name">
-    <transmission name="${steer_name}" type="SimpleTransmission">
+    <transmission name="${joint_name}_trans" type="SimpleTransmission">
       <type>transmission_interface/SimpleTransmission</type>
       <joint name="${joint_name}">
         <hardwareInterface>PositionJointInterface</hardwareInterface>
       </joint>
-      <actuator name="${steer_name}_steer_motor">
+      <actuator name="${joint_name}_steer_motor">
         <mechanicalReduction>1</mechanicalReduction>
         <hardwareInterface>PositionJointInterface</hardwareInterface>
       </actuator>
