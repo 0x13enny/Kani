@@ -1,0 +1,9 @@
+publish_period: 0.010
+dxl_read_period: 0.010
+dxl_write_period: 0.010
+
+# set if use_cmd_vel is true
+mobile_robot_config:                
+  seperation_between_wheels_x: 0.160
+  seperation_between_wheels_y: 0.2
+  radius_of_wheel: 0.033            
