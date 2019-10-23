@@ -128,8 +128,6 @@
     <xacro:kani_steer_trans joint_name="rightFront_steer_joint"/>
   </xacro:macro>
 
-
-
   <xacro:macro name="rb_wheel" params="parent x y z">
     <link name="rightBack_wheel_link">
       <inertial>
@@ -248,8 +246,6 @@
     <xacro:kani_steer_trans joint_name="rightBack_steer_joint"/>
   </xacro:macro>
 
-
-
   <xacro:macro name="lf_wheel" params="parent x y z">
     <link name="leftFront_wheel_link">
       <inertial>
@@ -367,7 +363,6 @@
     <xacro:kani_steer_gazebo link_name="leftFront_steer_link"/>
     <xacro:kani_steer_trans joint_name="leftFront_steer_joint"/>
   </xacro:macro>
-
 
   <xacro:macro name="lb_wheel" params="parent x y z">
     <link name="leftBack_wheel_link">

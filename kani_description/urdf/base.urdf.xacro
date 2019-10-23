@@ -2,7 +2,10 @@
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
   <!-- <xacro:include filename="$(find kani_description)/urdf/base.transmission.xacro"/> -->
   <!-- <xacro:include filename="$(find kani_description)/urdf/base.gazebo.xacro" /> -->
-
+  <xacro:include filename="$(find kani_description)/urdf/sensors/rplidar_A1.urdf.xacro" />
+  <xacro:include filename="$(find kani_description)/urdf/sensors/_d435.urdf.xacro" />
+  <xacro:property name="base_height" value="0.06" />
+  
 
   <xacro:macro name="kani_base">
     <link name="base_footprint">
@@ -15,7 +18,7 @@
     </link>
 
     <joint name="base_footprint_joint" type="fixed">
-      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <origin xyz="0 0 ${base_height}" rpy="0 0 0"/>
       <child link="base_link" />
       <parent link="base_footprint"/>
     </joint>
@@ -23,7 +26,7 @@
     <link name="base_link">
       <inertial>
         <origin
-          xyz="0.0 0.0 0.06"
+          xyz="0 0 0"
           rpy="0 0 0"/>
         <mass 
           value="0.05"/>
@@ -37,7 +40,7 @@
       </inertial>
       <visual>
         <origin
-          xyz="-0.125 -0.1 0.05"
+          xyz="-0.125 -0.1 0"
           rpy="${pi/2} 0 ${pi/2}"/>
         <geometry>
           <mesh
@@ -62,7 +65,14 @@
     <!-- <xacro:rwheel />
     <xacro:lwheel /> -->
 
-    <!-- Hokuyo utm30lx-->
+    <!-- intel realsense d435 utm30lx-->
+    <sensor_d435 parent="base_link">
+      <origin xyz="0 0 -1" rpy="0 0 0"/>
+    </sensor_d435>
+    <sensor_a1 parent="base_link" name="laser">
+      <origin xyz="0 0 1" rpy="0 0 0"/>
+    </sensor_a1>
+
     <!-- <xacro:hokuyo_utm30lx name="hokuyo" parent="base_link"/> -->
     <!-- <xacro:hokuyo_utm30lx_back name="hokuyo_back" parent="base_link"/> -->
 
