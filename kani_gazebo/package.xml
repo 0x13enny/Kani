@@ -51,6 +51,7 @@
   <buildtool_depend>catkin</buildtool_depend>
   <build_depend>gazebo_ros_control</build_depend>
   <exec_depend>gazebo_ros_control</exec_depend>
+  <exec_depend>dynamixel_workbench_controllers</exec_depend>
 
 
   <!-- The export tag contains other, unspecified, tags -->

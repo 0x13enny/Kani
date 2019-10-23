@@ -1,0 +1,11 @@
+gazebo_ros_control/pid_gains:
+
+  leftBack_steer_joint: {p: 1.0, i: 0.0, d: 1.0}
+  leftBack_wheel_joint: {p: 1.0, i: 0.0, d: 1.0}
+  leftFront_steer_joint: {p: 1.0, i: 0.0, d: 1.0}
+  leftFront_wheel_joint: {p: 1.0, i: 0.0, d: 1.0}
+  rightBack_steer_joint: {p: 1.0, i: 0.0, d: 1.0}
+  rightBack_wheel_joint: {p: 1.0, i: 0.0, d: 1.0}
+  rightFront_steer_joint: {p: 1.0, i: 0.0, d: 1.0}
+  rightFront_wheel_joint: {p: 1.0, i: 0.0, d: 1.0}
+
