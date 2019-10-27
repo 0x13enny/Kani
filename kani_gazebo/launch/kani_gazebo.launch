@@ -4,7 +4,7 @@
   <arg name="rqt_steering" default="true"/>
   <arg name="rviz" default="true"/>
   <arg name="model" default="$(find kani_description)/robots/kani.urdf.xacro"/>
-  <arg name="world_name" default="$(find ironfish_gazebo)/world/iceira302.world"/>
+  <arg name="world_name" default="$(find kani_gazebo)/world/iceira302.world"/>
   <!--arg name="world_name" default="$(find iceira_gazebo)/world/iceira_v3.world"/-->
   <arg name="rvizconfig" default="$(find kani_gazebo)/rviz/kani.rviz" />
   <arg name="controllers_config" default="$(find kani_ros_control)/config/kani_ros_control_sim.yaml" />
