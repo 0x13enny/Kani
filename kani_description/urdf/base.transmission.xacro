@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!-- Extensions -->
 
-<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
   <!-- wheel transmission -->
   <xacro:macro name="kani_wheel_trans" params="joint_name">
     <transmission name="${joint_name}_trans" type="SimpleTransmission">

@@ -9,6 +9,8 @@ aluminum peripherial evaluation case.
 -->
 
 <robot name="sensor_d435" xmlns:xacro="http://ros.org/wiki/xacro">
+  <xacro:include filename="$(find kani_description)/urdf/sensors/_d435.gazebo.xacro" />
+
   <xacro:macro name="sensor_d435" params="parent *origin">
     <xacro:property name="M_PI" value="3.1415926535897931" />
   
@@ -74,6 +76,22 @@ aluminum peripherial evaluation case.
         <origin xyz="0 0 0" />
         <inertia ixx="0.003881243" ixy="0.0" ixz="0.0" iyy="0.000498940" iyz="0.0" izz="0.003879257" />
       </inertial>
+      <sensor name="camera" type="depth">
+        <update_rate>20</update_rate>
+        <camera>
+          <horizontal_fov>1.047198</horizontal_fov>
+          <image>
+            <width>640</width>
+            <height>480</height>
+            <format>R8G8B8</format>
+          </image>
+          <clip>
+            <near>0.05</near>
+            <far>3</far>
+          </clip>
+        </camera>
+      </sensor>
+
     </link>
    
     <!-- camera depth joints and links -->
@@ -135,5 +153,10 @@ aluminum peripherial evaluation case.
       <child link="camera_color_optical_frame" />
     </joint>
     <link name="camera_color_optical_frame"/>
+
+    <!-- assume the rgb camera on the depth lens frame -->
+    <!-- assume kinect as camera -->
+    <xacro:realsense_d435_depth name="camera_depth_optical"/>
+
   </xacro:macro>
 </robot>
