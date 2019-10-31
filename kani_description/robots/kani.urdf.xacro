@@ -14,10 +14,10 @@
   <xacro:rb_steer parent="base_link" x="-0.092" y="-0.08875" z="-0.0039"/>
   <xacro:lb_steer parent="base_link" x="-0.092" y="0.08875" z="-0.0039" />
 
-  <xacro:rf_wheel parent="rightFront_steer_link" x="0" y="0" z="-0.03945"/>
-  <xacro:lf_wheel parent="leftFront_steer_link" x="0" y="0" z="-0.03945" />
-  <xacro:rb_wheel parent="rightBack_steer_link" x="0" y="0" z="-0.03945" />
-  <xacro:lb_wheel parent="leftBack_steer_link" x="0" y="0" z="-0.03945" />
+  <xacro:rf_wheel parent="rightFront_steer_link" x="0" y="0" z="-0.03395"/>
+  <xacro:lf_wheel parent="leftFront_steer_link" x="0" y="0" z="-0.03395" />
+  <xacro:rb_wheel parent="rightBack_steer_link" x="0" y="0" z="-0.03395" />
+  <xacro:lb_wheel parent="leftBack_steer_link" x="0" y="0" z="-0.03395" />
 
 
 </robot>
