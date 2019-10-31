@@ -12,6 +12,43 @@
   <!-- Convert an xacro and put on parameter server-->
   <param name="robot_description" command="$(find xacro)/xacro $(arg model)" />
   
+
+
+  <!-- start four_wheel_steering -->
+  <node name="steer" pkg="dynamixel_workbench_controllers" type="dynamixel_workbench_controllers_steer"
+        required="true" output="screen" args="$(arg usb_port) $(arg dxl_baud_rate)">
+    <param name="use_moveit"              value="$(arg use_moveit)"/>
+    <param name="use_joint_states_topic"  value="$(arg use_joint_state)"/>
+    <param name="use_cmd_vel_topic"       value="$(arg use_cmd_vel)"/>
+    <rosparam>
+      publish_period: 0.010
+      dxl_read_period: 0.010
+      dxl_write_period: 0.010
+      mobile_robot_config:                
+        seperation_between_wheels_x: 0.1775
+        seperation_between_wheels_y: 0.18
+        radius_of_wheel: 0.0333333333333   <!--default value is set by reference of TB3-->
+    </rosparam>
+  </node>
+
+  <node name="power" pkg="dynamixel_workbench_controllers" type="dynamixel_workbench_controllers"
+        required="true" output="screen" args="$(arg usb_port) $(arg dxl_baud_rate)">
+    <param name="use_moveit"              value="$(arg use_moveit)"/>
+    <param name="use_joint_states_topic"  value="$(arg use_joint_state)"/>
+    <param name="use_cmd_vel_topic"       value="$(arg use_cmd_vel)"/>
+    <rosparam>
+      publish_period: 0.010
+      dxl_read_period: 0.010
+      dxl_write_period: 0.010
+      mobile_robot_config:                
+        seperation_between_wheels_x: 0.1775
+        seperation_between_wheels_y: 0.18
+        radius_of_wheel: 0.0333333333333        <!--default value is set by reference of TB3-->
+    </rosparam>
+  </node>
+
+
+
   <!--Load controller parameter for simulation-->
   <rosparam command="load" file="$(arg sim_controllers_config)"/>
 
