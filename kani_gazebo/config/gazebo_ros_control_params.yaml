@@ -1,11 +1,10 @@
 gazebo_ros_control/pid_gains:
 
-  leftBack_steer_joint: {p: 1.0, i: 0.0, d: 1.0}
-  leftBack_wheel_joint: {p: 1.0, i: 0.0, d: 1.0}
-  leftFront_steer_joint: {p: 1.0, i: 0.0, d: 1.0}
-  leftFront_wheel_joint: {p: 1.0, i: 0.0, d: 1.0}
-  rightBack_steer_joint: {p: 1.0, i: 0.0, d: 1.0}
-  rightBack_wheel_joint: {p: 1.0, i: 0.0, d: 1.0}
-  rightFront_steer_joint: {p: 1.0, i: 0.0, d: 1.0}
-  rightFront_wheel_joint: {p: 1.0, i: 0.0, d: 1.0}
-
+  leftBack_steer_joint: {p: 1.0, i: 0.001, d: 0.1}
+  leftFront_steer_joint: {p: 1.0, i: 0.001, d: 0.1}
+  rightBack_steer_joint: {p: 1.0, i: 0.001, d: 0.1}
+  rightFront_steer_joint: {p: 1.0, i: 0.001, d: 0.1}
+  leftBack_wheel_joint: {p: 0.01}
+  leftFront_wheel_joint: {p: 0.01}
+  rightBack_wheel_joint: {p: 0.01}
+  rightFront_wheel_joint: {p: 0.01}

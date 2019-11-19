@@ -1,3 +1,4 @@
+<?xml version="1.0"?>
 <launch>
 
   <!--Argument in this launch file-->
@@ -26,13 +27,6 @@
   <!-- Convert an xacro and put on parameter server-->
   <param name="robot_description" command="python $(find xacro)/xacro $(arg model)" />
 
-  <!-- start four_wheel_steering -->
-  <!-- <node name="four_wheel_steering"
-      pkg="four_wheel_steering_controller"
-      type="four_wheel_steering" output="screen"/> -->
-
-
-
   <!-- Spawn a robot into Gazebo -->
   <node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model"
     args="-x $(arg x) -y $(arg y) -z $(arg z) -R $(arg R) -P $(arg P) -Y $(arg Y) -unpause -urdf -model kani -param robot_description"
@@ -42,17 +36,20 @@
   <rosparam command="load" file="$(arg controllers_config)"/>
 
   <!--Load PID-->
+  <!-- fail -->
   <rosparam command="load" file="$(find kani_gazebo)/config/gazebo_ros_control_params.yaml"/>
 
   <!--Publish robot state-->
-  <node pkg="robot_state_publisher" type="robot_state_publisher"  name="robot_state_publisher">
+  <node name="kani_joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" ></node>
+  <node pkg="robot_state_publisher" type="robot_state_publisher"  name="kani_robot_state_publisher">
      <param name="publish_frequency" type="double" value="50.0" />
   </node>
 
   <!--Spawn Controller-->
   <node name="four_wheel_controller_spawner" pkg="controller_manager" type="spawner"
     args="kani_joint_state_publisher
-          kani_steering_controller"
+          kani_steering_controller
+          "
     ns="/"
   respawn="false"/>
 
@@ -60,6 +57,7 @@
   <group if="$(arg rqt_steering)">
     <node name="rqt_robot_steering" pkg="rqt_robot_steering" type="rqt_robot_steering">
       <param name="default_topic" value="/kani_steering_controller/cmd_vel"/>
+      <param name="steer" value="/kani_  steering_controller/cmd_four_wheel_steering"/>
     </node>
   </group>
 
