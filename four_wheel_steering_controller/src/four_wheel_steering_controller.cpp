@@ -387,31 +387,40 @@ namespace four_wheel_steering_controller{
       if(fabs(curr_cmd_twist.lin_x) > 0.001)
       {
         double vel_steering_offset = (curr_cmd_twist.ang*wheel_steering_y_offset_)/wheel_radius_;
-        vel_left_front  = copysign(1.0, curr_cmd_twist.lin_x) * sqrt((pow(curr_cmd_twist.lin_x - curr_cmd_twist.ang*steering_track/2,2)
-                                                                           +pow(wheel_base_*curr_cmd_twist.ang/2.0,2)))/wheel_radius_
-                                                        - vel_steering_offset;
-        vel_right_front = copysign(1.0, curr_cmd_twist.lin_x) * sqrt((pow(curr_cmd_twist.lin_x + curr_cmd_twist.ang*steering_track/2,2)
-                                                                           +pow(wheel_base_*curr_cmd_twist.ang/2.0,2)))/wheel_radius_
-                                                        + vel_steering_offset;
-        vel_left_rear = copysign(1.0, curr_cmd_twist.lin_x) * sqrt((pow(curr_cmd_twist.lin_x - curr_cmd_twist.ang*steering_track/2,2)
-                                                                         +pow(wheel_base_*curr_cmd_twist.ang/2.0,2)))/wheel_radius_
-                                                      - vel_steering_offset;
-        vel_right_rear = copysign(1.0, curr_cmd_twist.lin_x) * sqrt((pow(curr_cmd_twist.lin_x + curr_cmd_twist.ang*steering_track/2,2)
-                                                                          +pow(wheel_base_*curr_cmd_twist.ang/2.0,2)))/wheel_radius_
-                                                       + vel_steering_offset;
+        // vel_left_front  = copysign(1.0, curr_cmd_twist.lin_x) * sqrt((pow(curr_cmd_twist.lin_x - curr_cmd_twist.ang*steering_track/2,2)
+        //                                                                    +pow(wheel_base_*curr_cmd_twist.ang/2.0,2)))/wheel_radius_
+        //                                                 - vel_steering_offset;
+        // vel_right_front = copysign(1.0, curr_cmd_twist.lin_x) * sqrt((pow(curr_cmd_twist.lin_x + curr_cmd_twist.ang*steering_track/2,2)
+        //                                                                    +pow(wheel_base_*curr_cmd_twist.ang/2.0,2)))/wheel_radius_
+        //                                                 + vel_steering_offset;
+        // vel_left_rear = copysign(1.0, curr_cmd_twist.lin_x) * sqrt((pow(curr_cmd_twist.lin_x - curr_cmd_twist.ang*steering_track/2,2)
+        //                                                                  +pow(wheel_base_*curr_cmd_twist.ang/2.0,2)))/wheel_radius_
+        //                                               - vel_steering_offset;
+        // vel_right_rear = copysign(1.0, curr_cmd_twist.lin_x) * sqrt((pow(curr_cmd_twist.lin_x + curr_cmd_twist.ang*steering_track/2,2)
+        //                                                                   +pow(wheel_base_*curr_cmd_twist.ang/2.0,2)))/wheel_radius_
+        //                                                + vel_steering_offset;
+
+        vel_left_front = copysign(1.0, curr_cmd_4ws.lin) * curr_cmd_4ws.lin;
+        vel_right_front = copysign(1.0, curr_cmd_4ws.lin) * curr_cmd_4ws.lin;
+        vel_left_rear = copysign(1.0, curr_cmd_4ws.lin) * curr_cmd_4ws.lin;
+        vel_right_rear = copysign(1.0, curr_cmd_4ws.lin) * curr_cmd_4ws.lin;
       }
 
       // Compute steering angles
       if(fabs(2.0*curr_cmd_twist.lin_x) > fabs(curr_cmd_twist.ang*steering_track))
       {
-        front_left_steering = atan(curr_cmd_twist.ang*wheel_base_ /
-                                    (2.0*curr_cmd_twist.lin_x - curr_cmd_twist.ang*steering_track));
-        front_right_steering = atan(curr_cmd_twist.ang*wheel_base_ /
-                                     (2.0*curr_cmd_twist.lin_x + curr_cmd_twist.ang*steering_track));
-        rear_left_steering = -atan(curr_cmd_twist.ang*wheel_base_ /
-                                    (2.0*curr_cmd_twist.lin_x - curr_cmd_twist.ang*steering_track));
-        rear_right_steering = -atan(curr_cmd_twist.ang*wheel_base_ /
-                                     (2.0*curr_cmd_twist.lin_x + curr_cmd_twist.ang*steering_track));
+        // front_left_steering = atan(curr_cmd_twist.ang*wheel_base_ /
+        //                             (2.0*curr_cmd_twist.lin_x - curr_cmd_twist.ang*steering_track));
+        // front_right_steering = atan(curr_cmd_twist.ang*wheel_base_ /
+        //                              (2.0*curr_cmd_twist.lin_x + curr_cmd_twist.ang*steering_track));
+        // rear_left_steering = -atan(curr_cmd_twist.ang*wheel_base_ /
+        //                             (2.0*curr_cmd_twist.lin_x - curr_cmd_twist.ang*steering_track));
+        // rear_right_steering = -atan(curr_cmd_twist.ang*wheel_base_ /
+        //                              (2.0*curr_cmd_twist.lin_x + curr_cmd_twist.ang*steering_track));
+        front_left_steering = curr_cmd_4ws.front_steering;
+        front_right_steering = curr_cmd_4ws.front_steering;
+        rear_left_steering = curr_cmd_4ws.rear_steering;
+        rear_right_steering = curr_cmd_4ws.rear_steering;
       }
       else if(fabs(curr_cmd_twist.lin_x) > 0.001)
       {
