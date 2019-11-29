@@ -1,3 +1,4 @@
+<?xml version="1.0"?>
 <launch>
   <!--Argument in this launch file-->
   <arg name="rqt_steering" default="false"/>
@@ -15,8 +16,7 @@
 
 
   <!-- start four_wheel_steering -->
-  <node name="steer" pkg="dynamixel_workbench_controllers" type="dynamixel_workbench_controllers_steer"
-        required="true" output="screen" args="$(arg usb_port) $(arg dxl_baud_rate)">
+  <node name="steer" pkg="dynamixel_workbench_controllers" type="dynamixel_workbench_controllers_steer" required="true" output="screen" args="$(arg usb_port) $(arg dxl_baud_rate)">
     <param name="use_moveit"              value="$(arg use_moveit)"/>
     <param name="use_joint_states_topic"  value="$(arg use_joint_state)"/>
     <param name="use_cmd_vel_topic"       value="$(arg use_cmd_vel)"/>
@@ -69,7 +69,7 @@
   <!--Gui steering console (Optional)-->
   <group if="$(arg rqt_steering)">
     <node name="rqt_robot_steering" pkg="rqt_robot_steering" type="rqt_robot_steering">
-      <param name="default_topic" value="kani/cmd_vel"/>
+      <param name="default_topic" value="cmd_vel"/>
       <!--param name="default_vx_max" value="0.3"/-->
       <!--param name="default_vx_min" value="-0.25"/-->
     </node>

@@ -1,3 +1,4 @@
+<?xml version="1.0" ?>
 <launch>
   <arg name="wheel_port"              default="/dev/ttyUSB1"/>
   <arg name="wheel_baud_rate"         default="57600"/>
