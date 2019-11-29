@@ -400,10 +400,10 @@ namespace four_wheel_steering_controller{
         //                                                                   +pow(wheel_base_*curr_cmd_twist.ang/2.0,2)))/wheel_radius_
         //                                                + vel_steering_offset;
 
-        vel_left_front = copysign(1.0, curr_cmd_4ws.lin) * curr_cmd_4ws.lin;
-        vel_right_front = copysign(1.0, curr_cmd_4ws.lin) * curr_cmd_4ws.lin;
-        vel_left_rear = copysign(1.0, curr_cmd_4ws.lin) * curr_cmd_4ws.lin;
-        vel_right_rear = copysign(1.0, curr_cmd_4ws.lin) * curr_cmd_4ws.lin;
+        vel_left_front = std::hypot(curr_cmd_twist.lin_x,curr_cmd_twist.lin_y);
+        vel_right_front = std::hypot(curr_cmd_twist.lin_x,curr_cmd_twist.lin_y);
+        vel_left_rear = std::hypot(curr_cmd_twist.lin_x,curr_cmd_twist.lin_y);
+        vel_right_rear = std::hypot(curr_cmd_twist.lin_x,curr_cmd_twist.lin_y);
       }
 
       // Compute steering angles
@@ -417,10 +417,10 @@ namespace four_wheel_steering_controller{
         //                             (2.0*curr_cmd_twist.lin_x - curr_cmd_twist.ang*steering_track));
         // rear_right_steering = -atan(curr_cmd_twist.ang*wheel_base_ /
         //                              (2.0*curr_cmd_twist.lin_x + curr_cmd_twist.ang*steering_track));
-        front_left_steering = curr_cmd_4ws.front_steering;
-        front_right_steering = curr_cmd_4ws.front_steering;
-        rear_left_steering = curr_cmd_4ws.rear_steering;
-        rear_right_steering = curr_cmd_4ws.rear_steering;
+        front_left_steering = curr_cmd_twist.ang;
+        front_right_steering = curr_cmd_twist.ang;
+        rear_left_steering = curr_cmd_twist.ang;
+        rear_right_steering = curr_cmd_twist.ang;
       }
       else if(fabs(curr_cmd_twist.lin_x) > 0.001)
       {
