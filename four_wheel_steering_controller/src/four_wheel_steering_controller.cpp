@@ -400,10 +400,10 @@ namespace four_wheel_steering_controller{
         //                                                                   +pow(wheel_base_*curr_cmd_twist.ang/2.0,2)))/wheel_radius_
         //                                                + vel_steering_offset;
 
-        vel_left_front = std::hypot(curr_cmd_twist.lin_x,curr_cmd_twist.lin_y);
-        vel_right_front = std::hypot(curr_cmd_twist.lin_x,curr_cmd_twist.lin_y);
-        vel_left_rear = std::hypot(curr_cmd_twist.lin_x,curr_cmd_twist.lin_y);
-        vel_right_rear = std::hypot(curr_cmd_twist.lin_x,curr_cmd_twist.lin_y);
+        vel_left_front = std::hypot(curr_cmd_twist.lin_x,curr_cmd_twist.lin_y)/wheel_radius_;
+        vel_right_front = std::hypot(curr_cmd_twist.lin_x,curr_cmd_twist.lin_y)/wheel_radius_;
+        vel_left_rear = std::hypot(curr_cmd_twist.lin_x,curr_cmd_twist.lin_y)/wheel_radius_;
+        vel_right_rear = std::hypot(curr_cmd_twist.lin_x,curr_cmd_twist.lin_y)/wheel_radius_;
       }
 
       // Compute steering angles
