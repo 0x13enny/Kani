@@ -1,0 +1,5 @@
+<launch>
+  <include file="$(find openni_launch)/launch/openni.launch">
+    <arg name="device_id" default="#2" /><!--original is #1-->
+  </include>
+</launch>
