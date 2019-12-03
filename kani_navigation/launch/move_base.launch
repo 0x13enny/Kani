@@ -20,8 +20,8 @@
 
   <!-- main : move_base node-->
   <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
-    <remap from="cmd_vel" to="/kani_diff_drive_controller/cmd_vel"/>
-    <remap from="odom" to="/kani_diff_drive_controller/odom"/>
+    <remap from="cmd_vel" to="/kani_steering_controller/cmd_vel"/>
+    <remap from="odom" to="/kani_steering_controller/odom"/>
 
     <!--decise global/local planner-->
     <param name="controller_frequency" value="10.0"/>

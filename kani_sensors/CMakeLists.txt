@@ -8,9 +8,9 @@ project(kani_sensors)
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
-  openni_launch
-  razor_imu_9dof
-  realsense2_camera
+##  openni_launch
+##  razor_imu_9dof
+##  realsense2_camera
   urg_node
 )
 

@@ -18,10 +18,10 @@
       <arg name="rqt_steering" value="$(arg rqt_steering)"/>
     </include>
     <group if="$(arg dual_scan)">
-      <include file="$(find kani_sensors)/launch/urg_dual.launch"/>
+      <include file="$(find kani_sensors)/launch/rplidar.launch"/>
     </group>
     <group unless="$(arg dual_scan)">
-      <include file="$(find kani_sensors)/launch/urg.launch"/>
+      <include file="$(find kani_sensors)/launch/rplidar.launch"/>
     </group>
   </group>
 
