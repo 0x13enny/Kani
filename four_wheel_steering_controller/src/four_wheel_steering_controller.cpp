@@ -345,7 +345,7 @@ namespace four_wheel_steering_controller{
     Command4ws curr_cmd_4ws = *(command_four_wheel_steering_.readFromRT());
     bool ackerman_mode_;
   
-    // ros::param::set("ackerman_mode", false);
+    ros::param::set("ackerman_mode", false);
     ros::param::get("ackerman_mode", ackerman_mode_);
     // ROS_ERROR_STREAM(ackerman_mode_);
     // ROS_ERROR_STREAM(ackerman_mode_);
@@ -415,10 +415,10 @@ namespace four_wheel_steering_controller{
                                                        + vel_steering_offset;
       }
       else{
-        vel_left_front = std::hypot(curr_cmd_twist.lin_x,curr_cmd_twist.lin_y)/wheel_radius_;
-        vel_right_front = std::hypot(curr_cmd_twist.lin_x,curr_cmd_twist.lin_y)/wheel_radius_;
-        vel_left_rear = std::hypot(curr_cmd_twist.lin_x,curr_cmd_twist.lin_y)/wheel_radius_;
-        vel_right_rear = std::hypot(curr_cmd_twist.lin_x,curr_cmd_twist.lin_y)/wheel_radius_;
+        vel_left_front = copysign(1.0, curr_cmd_twist.lin_x) * std::hypot(curr_cmd_twist.lin_x,curr_cmd_twist.lin_y)/wheel_radius_;
+        vel_right_front = copysign(1.0, curr_cmd_twist.lin_x) * std::hypot(curr_cmd_twist.lin_x,curr_cmd_twist.lin_y)/wheel_radius_;
+        vel_left_rear = copysign(1.0, curr_cmd_twist.lin_x) * std::hypot(curr_cmd_twist.lin_x,curr_cmd_twist.lin_y)/wheel_radius_;
+        vel_right_rear = copysign(1.0, curr_cmd_twist.lin_x) * std::hypot(curr_cmd_twist.lin_x,curr_cmd_twist.lin_y)/wheel_radius_;
       }
       }
 
