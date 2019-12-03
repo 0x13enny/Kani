@@ -30,8 +30,8 @@
   <xacro:macro name="kani_wheel_gazebo" params="link_name">
     <gazebo reference="${link_name}">
       <material>Gazebo/Black</material>
-      <mu1 value="0.2"/>
-      <mu2 value="0.2"/>
+      <mu1 value="0.8"/>
+      <mu2 value="0.8"/>
       <kp value="1000000.0"/>
       <kd value="1.0"/>
       <fdir1 value="1 0 0"/>
