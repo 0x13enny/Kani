@@ -16,17 +16,19 @@
   <arg name="P" default="0"/>
   <arg name="Y" default="0"/>
 
+
+  <param name="ackerman_mode" type="bool" value="false"/>
+
   <!-- Launch gazebo world.
   We resume the logic in empty_world.launch, changing only the name of the world to be launched -->
   <include file="$(find gazebo_ros)/launch/empty_world.launch">
-    <arg name="world_name" default="$(arg world_name)"/>
-    <arg name="gui" value="true"/>
+   <arg name="world_name" default="$(arg world_name)"/>
+    <arg name="gui" value="true"/> 
   
   </include>
 
   <!-- Convert an xacro and put on parameter server-->
   <param name="robot_description" command="python $(find xacro)/xacro $(arg model)" />
-
   <!-- Spawn a robot into Gazebo -->
   <node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model"
     args="-x $(arg x) -y $(arg y) -z $(arg z) -R $(arg R) -P $(arg P) -Y $(arg Y) -unpause -urdf -model kani -param robot_description"
@@ -59,7 +61,7 @@
       <param name="default_topic" value="/kani_steering_controller/cmd_vel"/>
       <param name="steer" value="/kani_  steering_controller/cmd_four_wheel_steering"/>
     </node>
-  </group>
+  </group> 
 
   <!--Gui rviz interface (Optional)-->
   <group if="$(arg rviz)">

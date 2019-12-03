@@ -50,13 +50,14 @@
   <!--   <doc_depend>doxygen</doc_depend> -->
   <buildtool_depend>catkin</buildtool_depend>
   <build_depend>razor_imu_9dof</build_depend>
-  <build_depend>realsense2_camera</build_depend>
+<!--  <build_depend>realsense2_camera</build_depend>-->
   <build_depend>urg_node</build_depend>
   <build_export_depend>razor_imu_9dof</build_export_depend>
-  <build_export_depend>realsense2_camera</build_export_depend>
+ <!-- <build_export_depend>realsense2_camera</build_export_depend>-->
+
   <build_export_depend>urg_node</build_export_depend>
   <exec_depend>razor_imu_9dof</exec_depend>
-  <exec_depend>realsense2_camera</exec_depend>
+  <!--<exec_depend>realsense2_camera</exec_depend>-->
   <exec_depend>urg_node</exec_depend>
 
 
