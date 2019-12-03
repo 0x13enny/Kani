@@ -40,6 +40,7 @@ kani_steering_controller:
   twist_covariance_diagonal: [0.001, 0.001, 0.001, 0.001, 0.001, 0.03]
   cmd_vel_timeout: 25.0 # not tested here
 
+
   # Base frame_id
   base_frame_id: base_footprint
 

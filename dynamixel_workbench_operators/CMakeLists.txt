@@ -74,10 +74,16 @@ add_executable(wheel_operator src/wheel_operator.cpp)
 add_dependencies(wheel_operator ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 target_link_libraries(wheel_operator ${catkin_LIBRARIES})
 
+add_executable(sim_operator src/sim_operator.cpp)
+add_dependencies(sim_operator ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(sim_operator ${catkin_LIBRARIES})
+
+
+
 #################################################################################
 ## Install
 #################################################################################
-install(TARGETS joint_operator wheel_operator
+install(TARGETS joint_operator wheel_operator sim_operator
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
