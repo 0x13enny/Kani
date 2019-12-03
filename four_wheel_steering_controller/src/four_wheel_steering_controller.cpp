@@ -345,7 +345,7 @@ namespace four_wheel_steering_controller{
     Command4ws curr_cmd_4ws = *(command_four_wheel_steering_.readFromRT());
     bool ackerman_mode_;
   
-    ros::param::set("ackerman_mode", false);
+    // ros::param::set("ackerman_mode", false);
     ros::param::get("ackerman_mode", ackerman_mode_);
     // ROS_ERROR_STREAM(ackerman_mode_);
     // ROS_ERROR_STREAM(ackerman_mode_);
