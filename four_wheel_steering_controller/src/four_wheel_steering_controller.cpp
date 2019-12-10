@@ -459,10 +459,10 @@ namespace four_wheel_steering_controller{
         front_right_steering =  atan(wheel_base_/steering_track);
         rear_left_steering = atan(wheel_base_/steering_track);
         rear_right_steering = -atan(wheel_base_/steering_track);
-        vel_left_front = curr_cmd_twist.ang/wheel_radius_;
-        vel_right_front = -curr_cmd_twist.ang/wheel_radius_;
-        vel_left_rear = curr_cmd_twist.ang/wheel_radius_;
-        vel_right_rear = -curr_cmd_twist.ang/wheel_radius_;
+        vel_left_front = -curr_cmd_twist.ang/wheel_radius_;
+        vel_right_front = curr_cmd_twist.ang/wheel_radius_;
+        vel_left_rear = -curr_cmd_twist.ang/wheel_radius_;
+        vel_right_rear = curr_cmd_twist.ang/wheel_radius_;
       }
       /*
       else if(fabs(curr_cmd_twist.lin_x) > 0.001)
