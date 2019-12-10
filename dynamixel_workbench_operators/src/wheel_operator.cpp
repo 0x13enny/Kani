@@ -80,8 +80,8 @@ int main(int argc, char **argv)
   ros::init(argc, argv, "wheel_operator");
   ros::NodeHandle node_handle("");
 
-  double lin_vel_step = 0.01;
-  double ang_vel_step = 0.01;
+  double lin_vel_step = 0.1;
+  double ang_vel_step = 0.1;
 
 
   ROS_INFO("You can set '-lin_vel_step' and '-ang_vel_step' arguments (default is 0.01 and 0.1)");
@@ -92,7 +92,8 @@ int main(int argc, char **argv)
     ang_vel_step = atof(argv[2]);
   }
 
-  ros::Publisher cmd_vel_pub = node_handle.advertise<geometry_msgs::Twist>("cmd_vel", 10);
+  ros::Publisher cmd_vel_pub = node_handle.advertise<geometry_msgs::Twist>("kani_steering_controller/cmd_vel", 10);
+
   geometry_msgs::Twist twist_msg;
 
   std::string msg =

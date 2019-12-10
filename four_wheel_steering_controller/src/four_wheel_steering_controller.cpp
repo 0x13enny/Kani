@@ -394,7 +394,7 @@ namespace four_wheel_steering_controller{
       last0_cmd_ = curr_cmd_twist;
 
       // Compute wheels velocities:
-      if(fabs(curr_cmd_twist.lin_x) > 0.001)
+      if(std::hypot(curr_cmd_twist.lin_x,curr_cmd_twist.lin_y) > 0.001)
       {
         double vel_steering_offset = (curr_cmd_twist.ang*wheel_steering_y_offset_)/wheel_radius_;
 
@@ -423,7 +423,8 @@ namespace four_wheel_steering_controller{
       }
 
       // Compute steering angles
-      if(fabs(2.0*curr_cmd_twist.lin_x) > fabs(curr_cmd_twist.ang*steering_track))
+      // if(
+      if(fabs(2.0*std::hypot(curr_cmd_twist.lin_x,curr_cmd_twist.lin_y)) > fabs(curr_cmd_twist.ang*steering_track))
       {
         // kani_custom
         if(ackerman_mode_){
@@ -437,12 +438,33 @@ namespace four_wheel_steering_controller{
                                      (2.0*curr_cmd_twist.lin_x + curr_cmd_twist.ang*steering_track));
         }
         else{  
+        // twist angle turning
+        /*
         front_left_steering = curr_cmd_twist.ang;
         front_right_steering = curr_cmd_twist.ang;
         rear_left_steering = curr_cmd_twist.ang;
         rear_right_steering = curr_cmd_twist.ang;
+        */
+        // atan(x, y) turning
+        front_left_steering = atan(curr_cmd_twist.lin_y/curr_cmd_twist.lin_x);
+        front_right_steering = atan(curr_cmd_twist.lin_y/curr_cmd_twist.lin_x);
+        rear_left_steering = atan(curr_cmd_twist.lin_y/curr_cmd_twist.lin_x);
+        rear_right_steering = atan(curr_cmd_twist.lin_y/curr_cmd_twist.lin_x);
+        
         }
       }
+      else if(fabs(curr_cmd_twist.ang) > 0.001)
+      {
+        front_left_steering = -atan(wheel_base_/steering_track);
+        front_right_steering =  atan(wheel_base_/steering_track);
+        rear_left_steering = atan(wheel_base_/steering_track);
+        rear_right_steering = -atan(wheel_base_/steering_track);
+        vel_left_front = curr_cmd_twist.ang/wheel_radius_;
+        vel_right_front = -curr_cmd_twist.ang/wheel_radius_;
+        vel_left_rear = curr_cmd_twist.ang/wheel_radius_;
+        vel_right_rear = -curr_cmd_twist.ang/wheel_radius_;
+      }
+      /*
       else if(fabs(curr_cmd_twist.lin_x) > 0.001)
       {
         front_left_steering = copysign(M_PI_2, curr_cmd_twist.ang);
@@ -450,6 +472,7 @@ namespace four_wheel_steering_controller{
         rear_left_steering = copysign(M_PI_2, -curr_cmd_twist.ang);
         rear_right_steering = copysign(M_PI_2, -curr_cmd_twist.ang);
       }
+      */
     }
     else
     {
