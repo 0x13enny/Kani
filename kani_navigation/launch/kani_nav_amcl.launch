@@ -1,3 +1,4 @@
+<?xml version="1.0"?>
 <launch>
   <!--common args-->
   <arg name="env" default="false"/><!--real=true sim=false-->
@@ -9,10 +10,10 @@
   <!--sim args-->
   <!--arg name="world_name" default="$(find ironfish_gazebo)/world/iceira302.world"/-->
   <!--arg name="map_name" default="$(find ironfish_navigation)/map/iceira302.yaml" unless="$(arg env)"/-->
-  <arg name="world_name" default="$(find iceira_gazebo)/world/iceira_v3.world"/>
-  <arg name="map_name" default="$(find ironfish_navigation)/map/iceira_v3_cropped.yaml" unless="$(arg env)"/>
+  <arg name="world_name" default="$(find kani_gazebo)/world/iceira_v3.world"/>
+  <arg name="map_name" default="$(find kani_navigation)/map/iceira_v3_cropped.yaml" unless="$(arg env)"/>
   <!--real args-->
-  <arg name="map_name" default="$(find ironfish_navigation)/map/iceira3F_real_cropped.yaml" if="$(arg env)"/>
+  <arg name="map_name" default="$(find kani_navigation)/map/iceira3F_real_cropped.yaml" if="$(arg env)"/>
 
   <group if="$(arg env)"><!--true, real-->
     <include file="$(find kani_ros_control)/launch/kani_ros_control.launch">
