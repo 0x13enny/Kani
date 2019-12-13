@@ -12,13 +12,14 @@
   <arg name="base_global_planner" default="carrot_planner/CarrotPlanner" if="$(eval choose_global == 1)"/>
   <arg name="base_global_planner" default="navfn/NavfnROS" if="$(eval choose_global == 2)"/>
   <arg name="base_global_planner" default="global_planner/GlobalPlanner" if="$(eval choose_global == 3)"/>
+  <!--arg name="base_global_planner" value="SBPLLatticePlanner" if="$(eval choose_global == 3)"/-->
+
 
   <!-- local planner cases--><!--base, dwa, teb-->
   <arg name="base_local_planner" default="base_local_planner/TrajectoryPlannerROS" if="$(eval choose_local == 1)"/>
   <arg name="base_local_planner" default="dwa_local_planner/DWAPlannerROS" if="$(eval choose_local == 2)"/>
   <arg name="base_local_planner" default="teb_local_planner/TebLocalPlannerROS" if="$(eval choose_local == 3)"/>
-
-  <!-- main : move_base node-->
+  <!--arg name="base_local_planner" default="eband_local_planner/EBandPlannerROS" if="$(eval choose_local == 3)"/-->
   <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
     <remap from="cmd_vel" to="/kani_steering_controller/cmd_vel"/>
     <remap from="odom" to="/kani_steering_controller/odom"/>
@@ -35,7 +36,7 @@
     <rosparam file="$(find kani_navigation)/param/global_planner.yaml" command="load"  if="$(eval choose_global == 3)" />
     <rosparam file="$(find kani_navigation)/param/dwa_local_planner.yaml" command="load" if="$(eval choose_local == 2)"/>
     <rosparam file="$(find kani_navigation)/param/teb_local_planner.yaml" command="load" if="$(eval choose_local == 3)"/>
-
+    <!--rosparam file="$(find kani_navigation)/param/sbpl_lattice_planner.yaml" command="load" if="$(eval choose_local == 3)"/-->
     <!-- costmap param -->
         <!--dual_scan == true-->
     <rosparam file="$(find kani_navigation)/param/costmap_common_dual.yaml" command="load" ns="global_costmap" if="$(arg dual_scan)"/>

@@ -1,0 +1,15 @@
+SBPLLatticePlanner:                                  # Also see: http://wiki.ros.org/sbpl_lattice_planner
+  planner_type: "ARAPlanner"
+  allocated_time: 10
+  initial_epsilon: "XYThetaLattice"
+  forward_search:  false
+  primitive_filename: ""
+  force_scratch_limit: 500
+  nominalvel_mpersecs: 0.4
+  timetoturn45degsinplace_secs: 0.6
+  lethal_obstacle: 20
+  
+  
+  
+  
+  
