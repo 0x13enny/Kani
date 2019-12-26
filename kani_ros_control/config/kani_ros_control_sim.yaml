@@ -2,7 +2,7 @@ kani_joint_state_publisher:
   type: "joint_state_controller/JointStateController"
   publish_rate: 50
 kani_steering_controller:
-  # type: "four_wheel_steering_controller/FourWheelSteeringController"
+  # type: "ackermann_steering_controller/AckermannSteeringController"
   # front_wheel: ["leftFront_wheel_joint", "rightFront_wheel_joint"]
   # rear_wheel: ["leftBack_wheel_joint", "rightBack_wheel_joint"]
   # front_steering: ["leftFront_steer_joint", "rightFront_steer_joint"]
