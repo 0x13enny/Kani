@@ -16,7 +16,7 @@
   <arg name="P" default="0"/>
   <arg name="Y" default="0"/>
 
-  <param name="ackerman_mode" type="bool" value="false"/>
+  <param name="ackerman_mode" type="bool" value="true"/>
 
   <!-- Launch gazebo world.
   We resume the logic in empty_world.launch, changing only the name of the world to be launched -->
