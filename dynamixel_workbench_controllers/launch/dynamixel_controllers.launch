@@ -1,5 +1,5 @@
 <launch>
-  <arg name="usb_port"                default="/dev/power"/>
+  <arg name="usb_port"                default="/dev/ttyUSB1"/>
   <arg name="dxl_baud_rate"           default="57600"/>
   <arg name="namespace"               default="dynamixel_workbench"/>
 
