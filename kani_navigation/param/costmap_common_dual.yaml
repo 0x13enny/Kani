@@ -2,7 +2,7 @@
 #footprint: [[0.36, 0.13], [0.20, 0.13], [0.08, 0.23], [0.08, 0.39], [-0.08, 0.39], [-0.08, 0.23], [-0.20, 0.13], [-0.36, 0.13], [-0.36, -0.13], [-0.20, -0.13], [-0.08, -0.23], [-0.08, -0.39], [0.08, -0.39], [0.08, -0.23], [0.20, -0.13], [0.36, -0.13]]
 robot_radius: 0.25
 footprint_padding: 0.01
-robot_base_frame: /base_footprint
+robot_base_frame: base_footprint
 transform_tolerance: 1.5
 
 obstacle_range: 3.0 #5.5
@@ -10,7 +10,7 @@ raytrace_range: 3.0 #6.0
 
 #layer definitions
 static:
-    map_topic: /map
+    map_topic: map
     subscribe_to_updates: true
 
 obstacles_laser:

@@ -9,7 +9,6 @@ project(kani_sensors)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   openni_launch
-  razor_imu_9dof
   urg_node
 )
 
