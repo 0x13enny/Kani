@@ -92,7 +92,7 @@ int main(int argc, char **argv)
     ang_vel_step = atof(argv[2]);
   }
 
-  ros::Publisher cmd_vel_pub = node_handle.advertise<geometry_msgs::Twist>("kani_steering_controller/cmd_vel", 10);
+  ros::Publisher cmd_vel_pub = node_handle.advertise<geometry_msgs::Twist>("/cmd_vel", 10);
 
   geometry_msgs::Twist twist_msg;
 
