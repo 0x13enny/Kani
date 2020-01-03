@@ -525,10 +525,10 @@ void DynamixelController::commandVelocityCallback(const geometry_msgs::Twist::Co
   //const uint8_t LEFT = 0;
   //const uint8_t RIGHT = 1;
 
-  const uint8_t power1 = 0;
-  const uint8_t power2 = 1;
-  const uint8_t power3 = 2;
-  const uint8_t power4 = 3;
+  const uint8_t power1 = 1;
+  const uint8_t power2 = 3;
+  const uint8_t power3 = 0;
+  const uint8_t power4 = 2;
 
   double robot_lin_vel_x = msg->linear.x;
   double robot_lin_vel_y = msg->linear.y;
