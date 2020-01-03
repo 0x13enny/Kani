@@ -18,7 +18,11 @@
 #define _USEMATH_DEFINES
 #include "dynamixel_workbench_controllers/dynamixel_workbench_controllers.h"
 #include <math.h>
+#include "tf/tf.h"
 #include "nav_msgs/Odometry.h"
+#include "geometry_msgs/Twist.h"
+#include "geometry_msgs/Pose.h"
+#include "geometry_msgs/PoseStamped.h"
 
 DynamixelController::DynamixelController()
   :node_handle_(""),
@@ -321,7 +325,7 @@ bool DynamixelController::getPresentPosition(std::vector<std::string> dxl_name)
 void DynamixelController::initPublisher()
 {
   dynamixel_state_list_pub_ = priv_node_handle_.advertise<dynamixel_workbench_msgs::DynamixelStateList>("dynamixel_state", 100);
-
+  
   pose_pub = priv_node_handle_.advertise<nav_msgs::Odometry>("pose",1000);
 
   if (is_joint_state_topic_) joint_states_pub_ = priv_node_handle_.advertise<sensor_msgs::JointState>("joint_states", 100);
@@ -459,14 +463,14 @@ void DynamixelController::readCallback(const ros::TimerEvent&)
   priv_read_secs = ros::Time::now().toSec();
 #endif
 }
-
+// here to publish odom
 void DynamixelController::publishCallback(const ros::TimerEvent&)
 {
 #ifdef DEBUG
   static double priv_pub_secs =ros::Time::now().toSec();
 #endif
   dynamixel_state_list_pub_.publish(dynamixel_state_list_);
-
+  // pose_pub.publish();  
   if (is_joint_state_topic_)
   {
     joint_state_msg_.header.stamp = ros::Time::now();
@@ -817,10 +821,10 @@ int main(int argc, char **argv)
   nav_msgs::Odometry position;
 
   //for odom->base_link transform
-  tf::TransformBroadcaster odom_broadcaster;
+  tf::TransformFloatData odom_broadcaster; //TransformBroadcaster -> TransformFloatData
   geometry_msgs::TransformStamped odom_trans;
 
-  std::string frame_id_odom;
+  // std::string frame_id_odom;
 
   if (argc < 2)
   {
@@ -887,9 +891,9 @@ int main(int argc, char **argv)
   dynamixel_controller.initSubscriber();
   //dynamixel_controller.initServer();
 
-  //ros::Timer read_timer = node_handle.createTimer(ros::Duration(dynamixel_controller.getReadPeriod()), &DynamixelController::readCallback, &dynamixel_controller);
-  //ros::Timer write_timer = node_handle.createTimer(ros::Duration(dynamixel_controller.getWritePeriod()), &DynamixelController::writeCallback, &dynamixel_controller);
-  //ros::Timer publish_timer = node_handle.createTimer(ros::Duration(dynamixel_controller.getPublishPeriod()), &DynamixelController::publishCallback, &dynamixel_controller);
+  ros::Timer read_timer = node_handle.createTimer(ros::Duration(dynamixel_controller.getReadPeriod()), &DynamixelController::readCallback, &dynamixel_controller);
+  ros::Timer write_timer = node_handle.createTimer(ros::Duration(dynamixel_controller.getWritePeriod()), &DynamixelController::writeCallback, &dynamixel_controller);
+  ros::Timer publish_timer = node_handle.createTimer(ros::Duration(dynamixel_controller.getPublishPeriod()), &DynamixelController::publishCallback, &dynamixel_controller);
 
   ros::spin();
 
