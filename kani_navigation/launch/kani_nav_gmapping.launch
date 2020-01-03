@@ -4,7 +4,7 @@
   <arg name="env" default="false"/><!--real=true sim=false-->
   <arg name="dual_scan" default="false"/>
   <arg name="rvizconfig" default="$(find kani_navigation)/rviz/kani.rviz"/>
-  <arg name="rviz" default="true"/>
+  <arg name="rviz" default="false"/>
   <arg name="rqt_steering" default="true"/>
   <arg name="no_static_map" default="true"/>
   <!--sim args-->

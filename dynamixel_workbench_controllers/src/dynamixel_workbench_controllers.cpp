@@ -18,6 +18,7 @@
 #define _USEMATH_DEFINES
 #include "dynamixel_workbench_controllers/dynamixel_workbench_controllers.h"
 #include <math.h>
+#include "nav_msgs/Odometry.h"
 
 DynamixelController::DynamixelController()
   :node_handle_(""),
@@ -238,6 +239,7 @@ bool DynamixelController::initSDKHandlers(void)
       ROS_ERROR("%s", log);
       return result;
     }
+   
   }
 
   return result;
@@ -319,6 +321,9 @@ bool DynamixelController::getPresentPosition(std::vector<std::string> dxl_name)
 void DynamixelController::initPublisher()
 {
   dynamixel_state_list_pub_ = priv_node_handle_.advertise<dynamixel_workbench_msgs::DynamixelStateList>("dynamixel_state", 100);
+
+  pose_pub = priv_node_handle_.advertise<nav_msgs::Odometry>("pose",1000);
+
   if (is_joint_state_topic_) joint_states_pub_ = priv_node_handle_.advertise<sensor_msgs::JointState>("joint_states", 100);
 }
 
@@ -472,6 +477,8 @@ void DynamixelController::publishCallback(const ros::TimerEvent&)
     joint_state_msg_.effort.clear();
 
     uint8_t id_cnt = 0;
+
+    // here to read encoder
     for (auto const& dxl:dynamixel_)
     {
       double position = 0.0;
@@ -807,6 +814,13 @@ int main(int argc, char **argv)
 
   std::string port_name = "/dev/power";
   uint32_t baud_rate = 57600;
+  nav_msgs::Odometry position;
+
+  //for odom->base_link transform
+  tf::TransformBroadcaster odom_broadcaster;
+  geometry_msgs::TransformStamped odom_trans;
+
+  std::string frame_id_odom;
 
   if (argc < 2)
   {
@@ -824,6 +838,8 @@ int main(int argc, char **argv)
   bool result = false;
 
   std::string yaml_file = node_handle.param<std::string>("dynamixel_info", "");
+
+ // std::string frame_id_odom = node_handle.param<std::string>("odom_frame", std::string("odom"));
 
   result = dynamixel_controller.initWorkbench(port_name, baud_rate);
   if (result == false)

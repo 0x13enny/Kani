@@ -12,59 +12,41 @@
 
   <!-- Convert an xacro and put on parameter server-->
   <param name="robot_description" command="$(find xacro)/xacro $(arg model)" />
-  
+  <arg name="usb_port_steer"                default="/dev/steer"/>
+  <arg name="dxl_baud_rate_steer"           default="115200"/>
+  <arg name="namespace"               default="dynamixel_workbench"/>
+  <arg name="use_moveit"              default="false"/>
+  <arg name="use_joint_state"         default="true"/>
+  <arg name="use_cmd_vel"             default="true"/>
+ 
 
 
   <!-- start four_wheel_steering -->
-  <node name="steer" pkg="dynamixel_workbench_controllers" type="dynamixel_workbench_controllers_steer" required="true" output="screen" args="$(arg usb_port) $(arg dxl_baud_rate)">
-    <param name="use_moveit"              value="$(arg use_moveit)"/>
-    <param name="use_joint_states_topic"  value="$(arg use_joint_state)"/>
-    <param name="use_cmd_vel_topic"       value="$(arg use_cmd_vel)"/>
-    <rosparam>
-      publish_period: 0.010
-      dxl_read_period: 0.010
-      dxl_write_period: 0.010
-      mobile_robot_config:                
-        seperation_between_wheels_x: 0.1775
-        seperation_between_wheels_y: 0.18
-        radius_of_wheel: 0.0333333333333   <!--default value is set by reference of TB3-->
-    </rosparam>
-  </node>
 
-  <node name="power" pkg="dynamixel_workbench_controllers" type="dynamixel_workbench_controllers"
-        required="true" output="screen" args="$(arg usb_port) $(arg dxl_baud_rate)">
-    <param name="use_moveit"              value="$(arg use_moveit)"/>
-    <param name="use_joint_states_topic"  value="$(arg use_joint_state)"/>
-    <param name="use_cmd_vel_topic"       value="$(arg use_cmd_vel)"/>
-    <rosparam>
-      publish_period: 0.010
-      dxl_read_period: 0.010
-      dxl_write_period: 0.010
-      mobile_robot_config:                
-        seperation_between_wheels_x: 0.1775
-        seperation_between_wheels_y: 0.18
-        radius_of_wheel: 0.0333333333333        <!--default value is set by reference of TB3-->
-    </rosparam>
-  </node>
+  <!--    <include file="$(find dynamixel_workbench_controllers)/launch/dynamixel_controllers_steer.launch"/>-->
 
-
+   <include file="$(find dynamixel_workbench_controllers)/launch/dynamixel_controllers.launch"/>
 
   <!--Load controller parameter for simulation-->
   <rosparam command="load" file="$(arg sim_controllers_config)"/>
 
   <!--Spawn Controller-->
-  <node name="four_wheel_controller_spawner" pkg="controller_manager" type="spawner"
+  <!--<node name="four_wheel_controller_spawner" pkg="controller_manager" type="spawner"
     args="kani_joint_state_publisher
-          kani_steering_controller"/>
+	  kani_steering_controller"/> -->
+ 
+
 
 
   <!--Main control launch file-->
-  <include file="$(find kani_ros_control)/launch/dynamixel_controllers.launch" />
-
+  <!--  <include file="$(find kani_ros_control)/launch/dynamixel_controllers.launch" />
+-->
   <!--Publish robot state-->
   <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"
     respawn="false" output="screen">
   </node>
+
+<node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" ></node>
 
   <!--Gui steering console (Optional)-->
   <group if="$(arg rqt_steering)">
