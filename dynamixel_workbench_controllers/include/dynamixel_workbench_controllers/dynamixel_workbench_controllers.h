@@ -61,6 +61,12 @@ class DynamixelController
   // ROS Topic Publisher
   ros::Publisher dynamixel_state_list_pub_;
   ros::Publisher joint_states_pub_;
+  
+
+
+  // odom publisher
+  ros::Publisher pose_pub;
+
 
   // ROS Topic Subscriber
   ros::Subscriber cmd_vel_sub_;
@@ -86,6 +92,7 @@ class DynamixelController
   bool is_joint_state_topic_;
   bool is_cmd_vel_topic_;
   bool use_moveit_;
+  std::string frame_id_odom;
 
   double wheel_separation_x_;
   double wheel_separation_y_;
