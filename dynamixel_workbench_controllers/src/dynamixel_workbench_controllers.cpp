@@ -636,12 +636,10 @@ void DynamixelController::commandVelocityCallback(const geometry_msgs::Twist::Co
   const uint8_t power2 = 3;
   const uint8_t power3 = 0;
   const uint8_t power4 = 2;
-
   const uint8_t steer1 = 6;
   const uint8_t steer2 = 7;
   const uint8_t steer3 = 4;
   const uint8_t steer4 = 5;
-
 
   double robot_lin_vel_x = msg->linear.x;
   double robot_lin_vel_y = msg->linear.y;
@@ -708,10 +706,10 @@ void DynamixelController::commandVelocityCallback(const geometry_msgs::Twist::Co
     }
     else
     {
-      dynamixel_velocity[power1]  = -wheel_velocity[power1] * velocity_constant_value;
-      dynamixel_velocity[power2] = wheel_velocity[power2] * velocity_constant_value;
-      dynamixel_velocity[power3]  = -wheel_velocity[power3] * velocity_constant_value;
-      dynamixel_velocity[power4] = wheel_velocity[power4] * velocity_constant_value;
+      dynamixel_velocity[power1]  = wheel_velocity[power1] * velocity_constant_value;
+      dynamixel_velocity[power2] = -wheel_velocity[power2] * velocity_constant_value;
+      dynamixel_velocity[power3]  = wheel_velocity[power3] * velocity_constant_value;
+      dynamixel_velocity[power4] = -wheel_velocity[power4] * velocity_constant_value;
       for (int i = 0; i<=3; i++)
       {
         if (wheel_angle[i]>0.5*M_PI)
