@@ -26,4 +26,29 @@ power4:
   Operating_Mode: 1
   Profile_Acceleration: 0
   Profile_Velocity: 0
- 
+steer1:
+  ID: 5
+  Return_Delay_Time: 0
+  Operating_Mode: 3
+  Profile_Acceleration: 0
+  Profile_Velocity: 0
+steer2:
+  ID: 6
+  Return_Delay_Time: 0
+  Operating_Mode: 3
+  Profile_Acceleration: 0
+  Profile_Velocity: 0
+steer3:
+  ID: 7
+  Return_Delay_Time: 0
+  Operating_Mode: 3
+  Profile_Acceleration: 0
+  Profile_Velocity: 0
+steer4:
+  ID: 8
+  Return_Delay_Time: 0
+  Operating_Mode: 3
+  Profile_Acceleration: 0
+  Profile_Velocity: 0
+
+

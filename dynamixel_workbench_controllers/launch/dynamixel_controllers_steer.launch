@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <launch>
   <arg name="usb_port"                default="/dev/steer"/>
-  <arg name="dxl_baud_rate"           default="115200"/>
+  <arg name="dxl_baud_rate"           default="57600"/>
   <arg name="namespace"               default="dynamixel_workbench"/>
 
   <arg name="use_moveit"              default="false"/>
