@@ -681,11 +681,11 @@ void DynamixelController::commandVelocityCallback(const geometry_msgs::Twist::Co
   B=robot_lin_vel_x+(robot_ang_vel*wheel_separation_y_/2);
   C=robot_lin_vel_y-(robot_ang_vel*wheel_separation_x_/2);
   D=robot_lin_vel_y+(robot_ang_vel*wheel_separation_x_/2);
-if(fabs(robot_lin_vel_x)>0.001))
+/*if(fabs(robot_lin_vel_x)>0.001))
 
 {
   const double vel_steering_offset = (robot_ang_vel*wheel_separation_y_/2);
-  const double sign=copysign
+  const double sign=copysign*/
 
   wheel_velocity[power1] = sqrt(C*C+A*A); 
   wheel_velocity[power2] = sqrt(C*C+B*B); 
