@@ -53,7 +53,7 @@ namespace four_wheel_steering_controller{
     , enable_twist_cmd_(false)
   {
   }
-
+  
   bool FourWheelSteeringController::init(hardware_interface::RobotHW *robot_hw,
                                          ros::NodeHandle& root_nh,
                                          ros::NodeHandle &controller_nh)
@@ -381,10 +381,13 @@ namespace four_wheel_steering_controller{
       last0_cmd_ = curr_cmd_twist;
 
       // Compute wheels velocities
-
+          double A= (curr_cmd_twist.lin_x - curr_cmd_twist.ang*(0.1775/2)) / (wheel_radius_);
+          double B= (curr_cmd_twist.lin_x + curr_cmd_twist.ang*(0.1775/2)) / (wheel_radius_);
+          double C= (curr_cmd_twist.lin_y - curr_cmd_twist.ang*(wheel_base_/2)) / (wheel_radius_);
+          double D= (curr_cmd_twist.lin_y + curr_cmd_twist.ang*(wheel_base_/2)) / (wheel_radius_);
         if(fabs(curr_cmd_twist.lin_x) > 0.001)
         {
-          {
+          /*{
           const double vel_steering_offset = (curr_cmd_twist.ang*wheel_steering_y_offset_)/(wheel_radius_);
           const double sign = copysign(1.0, curr_cmd_twist.lin_x);
           vel_left_front  = sign * std::hypot((curr_cmd_twist.lin_x - curr_cmd_twist.ang*steering_track/2),
@@ -401,11 +404,24 @@ namespace four_wheel_steering_controller{
           sign * std::hypot((curr_cmd_twist.lin_x + curr_cmd_twist.ang*steering_track/2),
                                           (wheel_base_*curr_cmd_twist.ang/2.0)) /(wheel_radius_)
                         + vel_steering_offset;
+          }*/
+          {
+   
+
+          
+          vel_left_front  = sqrt(C*C+B*B);
+          vel_right_front = sqrt(A*A+C*C);
+          vel_left_rear = sqrt(B*B+D*D);
+          vel_right_rear = sqrt(A*A+D*D);
+    
+ 
+          
+
           }
 
 
         // Compute steering angles
-       if(fabs(2.0*curr_cmd_twist.lin_x) > fabs(curr_cmd_twist.ang*steering_track))
+       /*if(fabs(2.0*curr_cmd_twist.lin_x) > fabs(curr_cmd_twist.ang*steering_track))
         {
           front_left_steering = atan(curr_cmd_twist.ang*wheel_base_ /
                                       (2.0*curr_cmd_twist.lin_x - curr_cmd_twist.ang*steering_track));
@@ -421,6 +437,65 @@ namespace four_wheel_steering_controller{
        -front_left_steering;
         rear_right_steering =//0;
         -front_right_steering;
+        }*/
+        if(fabs(2.0*curr_cmd_twist.lin_x) > fabs(curr_cmd_twist.ang*steering_track))
+        {
+      
+          front_left_steering =atan2(C,B);
+          front_right_steering =atan2(C,A);
+        }
+        else if(fabs(curr_cmd_twist.lin_x) > 0.001)
+        {
+          front_left_steering =atan2(C,B);
+          front_right_steering =atan2(D,A);
+          
+        }
+
+      rear_left_steering =atan2(D,B);
+      rear_right_steering =atan2(D,A);
+
+        
+     if (front_left_steering>0.5*M_PI)
+        {
+          front_left_steering=front_left_steering-M_PI;
+          vel_left_front=-vel_left_front;
+        }
+        if(front_left_steering<-0.5*M_PI)
+        {
+          front_left_steering=front_left_steering+M_PI;
+          vel_left_front=-vel_left_front; 
+        }
+       
+        if (front_right_steering>0.5*M_PI)
+        {
+          front_right_steering=front_right_steering-M_PI;
+          vel_right_front=-vel_right_front;
+        }
+        if(front_right_steering<(-0.5)*M_PI)
+        {
+          front_right_steering=front_right_steering+M_PI;
+          vel_right_front=-vel_right_front; 
+        }
+         if (rear_left_steering>0.5*M_PI)
+        {
+          rear_left_steering=rear_left_steering-M_PI;
+          vel_left_rear=-vel_left_rear;
+        }
+        if(rear_left_steering<-0.5*M_PI)
+        {
+          rear_left_steering=rear_left_steering+M_PI;
+          vel_left_rear=-vel_left_rear; 
+        }
+        if (rear_right_steering>0.5*M_PI)
+        {
+          rear_right_steering=rear_right_steering-M_PI;
+          vel_right_rear=-vel_right_rear;
+        }
+        if(rear_right_steering<-0.5*M_PI)
+        {
+          rear_right_steering=rear_right_steering+M_PI;
+          vel_right_rear=-vel_right_rear; 
+        }
         }
       
       else
@@ -439,13 +514,21 @@ namespace four_wheel_steering_controller{
         const double steering_diff =  steering_track*(tan_front_steering - tan_rear_steering)/2.0;
         if(fabs(wheel_base_ - fabs(steering_diff)) > 0.0001)
         {
-          front_left_steering = atan(wheel_base_*tan_front_steering/(wheel_base_-steering_diff));
+          /*front_left_steering = atan(wheel_base_*tan_front_steering/(wheel_base_-steering_diff));
           front_right_steering = atan(wheel_base_*tan_front_steering/(wheel_base_+steering_diff));
  
           rear_left_steering =// 0;
           atan(wheel_base_*tan_rear_steering/(wheel_base_-steering_diff));
           rear_right_steering =//0;
-          atan(wheel_base_*tan_rear_steering/(wheel_base_+steering_diff));
+          atan(wheel_base_*tan_rear_steering/(wheel_base_+steering_diff));*/
+     
+          front_left_steering =atan2(C,B);
+          front_right_steering =atan2(C,A);
+        
+          rear_left_steering =atan2(D,B);
+          rear_right_steering =atan2(D,A);
+          
+ 
         }
 
         // Compute wheels velocities:
@@ -471,7 +554,7 @@ namespace four_wheel_steering_controller{
           const double vel_steering_offset = (angular_speed_cmd*wheel_steering_y_offset_)/wheel_radius_;
           const double sign = copysign(1.0, curr_cmd_4ws.lin);
 
-          vel_left_front  = sign * std::hypot((curr_cmd_4ws.lin - angular_speed_cmd*steering_track/2),
+         /* vel_left_front  = sign * std::hypot((curr_cmd_4ws.lin - angular_speed_cmd*steering_track/2),
                                               (l_front*angular_speed_cmd))/wheel_radius_
                             - vel_steering_offset;
           vel_right_front = sign * std::hypot((curr_cmd_4ws.lin + angular_speed_cmd*steering_track/2),
@@ -484,8 +567,64 @@ namespace four_wheel_steering_controller{
           vel_right_rear = //sign*curr_cmd_4ws.lin/wheel_radius_;
         sign * std::hypot((curr_cmd_4ws.lin + angular_speed_cmd*steering_track/2),
                                             (l_rear*angular_speed_cmd))/wheel_radius_
-                          + vel_steering_offset;
+                          + vel_steering_offset;*/
+      
+         
+
+          
+          vel_left_front  =sqrt(C*C+B*B);
+          vel_right_front = sqrt(A*A+C*C);
+          vel_left_rear = sqrt(B*B+D*D);
+          vel_right_rear = sqrt(A*A+D*D);
+          
+          
+
+          
+
         }
+               if (front_left_steering>0.5*M_PI)
+        {
+          front_left_steering=front_left_steering-M_PI;
+          vel_left_front=-vel_left_front;
+        }
+        if(front_left_steering<-0.5*M_PI)
+        {
+          front_left_steering=front_left_steering+M_PI;
+          vel_left_front=-vel_left_front; 
+        }
+       
+        if (front_right_steering>0.5*M_PI)
+        {
+          front_right_steering=front_right_steering-M_PI;
+          vel_right_front=-vel_right_front;
+        }
+        if(front_right_steering<-0.5*M_PI)
+        {
+          front_right_steering=front_right_steering+M_PI;
+          vel_right_front=-vel_right_front; 
+        }
+        
+        if (rear_left_steering>0.5*M_PI)
+        {
+          rear_left_steering=rear_left_steering-M_PI;
+          vel_left_rear=-vel_left_rear;
+        }
+        if(rear_left_steering<-0.5*M_PI)
+        {
+          rear_left_steering=rear_left_steering+M_PI;
+          vel_left_rear=-vel_left_rear; 
+        }
+        if (rear_right_steering>0.5*M_PI)
+        {
+          rear_right_steering=rear_right_steering-M_PI;
+          vel_right_rear=-vel_right_rear;
+        }
+        if(rear_right_steering<-0.5*M_PI)
+        {
+          rear_right_steering=rear_right_steering+M_PI;
+          vel_right_rear=-vel_right_rear; 
+        }
+
     }
 
       ROS_DEBUG_STREAM_THROTTLE(1, "vel_left_rear "<<vel_left_rear<<" front_right_steering "<<front_right_steering);
