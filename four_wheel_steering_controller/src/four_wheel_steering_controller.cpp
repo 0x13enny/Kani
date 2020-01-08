@@ -53,7 +53,7 @@ namespace four_wheel_steering_controller{
     , enable_twist_cmd_(false)
   {
   }
-
+  
   bool FourWheelSteeringController::init(hardware_interface::RobotHW *robot_hw,
                                          ros::NodeHandle& root_nh,
                                          ros::NodeHandle &controller_nh)
@@ -381,10 +381,9 @@ namespace four_wheel_steering_controller{
       last0_cmd_ = curr_cmd_twist;
 
       // Compute wheels velocities
-
         if(fabs(curr_cmd_twist.lin_x) > 0.001)
         {
-          {
+          
           const double vel_steering_offset = (curr_cmd_twist.ang*wheel_steering_y_offset_)/(wheel_radius_);
           const double sign = copysign(1.0, curr_cmd_twist.lin_x);
           vel_left_front  = sign * std::hypot((curr_cmd_twist.lin_x - curr_cmd_twist.ang*steering_track/2),
@@ -401,7 +400,7 @@ namespace four_wheel_steering_controller{
           sign * std::hypot((curr_cmd_twist.lin_x + curr_cmd_twist.ang*steering_track/2),
                                           (wheel_base_*curr_cmd_twist.ang/2.0)) /(wheel_radius_)
                         + vel_steering_offset;
-          }
+ 
 
 
         // Compute steering angles
@@ -417,10 +416,10 @@ namespace four_wheel_steering_controller{
           front_left_steering = copysign(M_PI_2, curr_cmd_twist.ang);
           front_right_steering = copysign(M_PI_2, curr_cmd_twist.ang);
         }
-        rear_left_steering =//0;
-       -front_left_steering;
-        rear_right_steering =//0;
-        -front_right_steering;
+        rear_left_steering =-front_left_steering;
+        rear_right_steering = -front_right_steering;
+        }
+  
         }
       
       else
@@ -446,6 +445,10 @@ namespace four_wheel_steering_controller{
           atan(wheel_base_*tan_rear_steering/(wheel_base_-steering_diff));
           rear_right_steering =//0;
           atan(wheel_base_*tan_rear_steering/(wheel_base_+steering_diff));
+     
+         
+          
+ 
         }
 
         // Compute wheels velocities:
@@ -485,7 +488,18 @@ namespace four_wheel_steering_controller{
         sign * std::hypot((curr_cmd_4ws.lin + angular_speed_cmd*steering_track/2),
                                             (l_rear*angular_speed_cmd))/wheel_radius_
                           + vel_steering_offset;
+      
+         
+
+          
+      
+          
+          
+
+          
+
         }
+         
     }
 
       ROS_DEBUG_STREAM_THROTTLE(1, "vel_left_rear "<<vel_left_rear<<" front_right_steering "<<front_right_steering);
@@ -506,7 +520,7 @@ namespace four_wheel_steering_controller{
         rear_steering_joints_[0].setCommand(rear_left_steering);
         rear_steering_joints_[1].setCommand(rear_right_steering);
       }
-  }
+  
   }
 
   void FourWheelSteeringController::brake()
