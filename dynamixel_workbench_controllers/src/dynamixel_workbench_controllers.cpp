@@ -82,7 +82,6 @@ DynamixelController::DynamixelController()
   ros::Time current_time_ = ros::Time::now();
 
   current_pose.at(0) = 0;
-
   current_pose.at(1) = 0;
   current_pose.at(2) = 0;}
 
@@ -551,7 +550,7 @@ void DynamixelController::publishCallback(const ros::TimerEvent&)
 
       if(id_cnt < 4)
       {
-        vel[id_cnt] = velocity;
+        vel[id_cnt] = velocity * wheel_radius_;
         ROS_INFO("velocity : id %d ,%lf",id_cnt, vel[id_cnt]);
       }
       else {
@@ -563,35 +562,39 @@ void DynamixelController::publishCallback(const ros::TimerEvent&)
     }
   }
 
-  // ROS_INFO("")
   double dt = current_time_.toSec() - last_time_.toSec();
-  // double & x = current_pose[0];
-  // double & y = current_pose[1];
-  // double & w = current_pose[2];
 
-  // compute x, y, z by integration
-
-  // FR_vec[0] = vel[0]*cos(theta[0]); num 1 5 
-  // FR_vec[1] = vel[0]*sin(theta[0]);
-  // FL_vec[0] = vel[1]*cos(theta[1]); num 2 6
-  // FL_vec[1] = vel[1]*sin(theta[1]);
-  // RR_vec[0] = vel[2]*cos(theta[2]); num 3 7
-  // RR_vec[1] = vel[2]*sin(theta[2]);
-  // RL_vec[0] = vel[3]*cos(theta[3]); num 4 8
-  // RL_vec[1] = vel[3]*sin(theta[3]);
 
   // average vectors
   ROS_INFO("x, y, w : %lf, %lf, %lf", current_pose.at(0), current_pose.at(1), current_pose.at(2));
   ROS_INFO("publishing odom");
+  double dx_p = (vel[0]*cos(theta[0] * PI / 180.0) + vel[1]*cos(theta[1] * PI / 180.0) + vel[2]*cos(theta[2] * PI / 180.0) + vel[3]*cos(theta[3] * PI / 180.0));
+  double dy_p = (vel[0]*sin(theta[0] * PI / 180.0) + vel[1]*sin(theta[1] * PI / 180.0) + vel[2]*sin(theta[2] * PI / 180.0) + vel[3]*sin(theta[3] * PI / 180.0));
+  double th = -theta[3];
+  double phi = -theta[2];
 
-  current_pose.at(0) += (vel[0]*cos(theta[0] * PI / 180.0) + vel[1]*cos(theta[1] * PI / 180.0) + vel[2]*cos(theta[2] * PI / 180.0) + vel[3]*cos(theta[3] * PI / 180.0)) * dt; // dx
-  current_pose.at(1) += (vel[0]*sin(theta[0] * PI / 180.0) + vel[1]*sin(theta[1] * PI / 180.0) + vel[2]*sin(theta[2] * PI / 180.0) + vel[3]*sin(theta[3] * PI / 180.0)) * dt; // dy
-  current_pose.at(2) += 0;//dw;
-  
+  if (fabs(th - phi) > 0.0001){
+  double swerve_radius_x = (tan(phi) * wheel_separation_x_/2 - tan(th) * wheel_separation_x_/2)/(tan(phi) - tan(th)) ;
+  double swerve_radius = sqrt(pow(swerve_radius_x,2) + pow(tan(phi) * (swerve_radius_x + wheel_separation_x_/2) + wheel_separation_y_/2 ,2));
+  double w = sqrt(pow(dx_p,2) + pow(dy_p,2)) / swerve_radius;// V / R = omega // sqrt((dx_p)^2 + (dy_p)^2) / R 
+  }
+  current_pose.at(0) += (dx_p * cos(current_pose.at(2)) - dy_p * sin(current_pose.at(2))) * dt; // dx
+  current_pose.at(1) += (dx_p * sin(current_pose.at(2)) + dy_p * cos(current_pose.at(2))) * dt; // dy
+  current_pose.at(2) += w * dt;//d omega;
+
+
+
+  if (current_pose.at(2) > 2 * PI){
+  current_pose.at(2) -= 2 * PI;
+  }
+  else if (current_pose.at(2) < -2 * PI){
+  current_pose.at(2) += 2* PI;
+  }
+  //current_pose.at(0) += 1.0;
   // publish tf
+
   // publishing transform odom->base_link
 
-  ROS_INFO("publishing odom2");
   current_time_ = ros::Time::now();
   odom_trans.header.stamp = current_time_;
   odom_trans.header.frame_id = frame_id_odom;
