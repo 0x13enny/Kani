@@ -4,18 +4,22 @@
   <arg name="env" default="false"/><!--real=true sim=false-->
   <arg name="dual_scan" default="false"/>
   <arg name="rvizconfig" default="$(find kani_navigation)/rviz/kani.rviz"/>
-  <arg name="rviz" default="true"/>
+  <arg name="rviz" default="false"/>
   <arg name="rqt_steering" default="true"/>
   <arg name="no_static_map" default="true"/>
+  <arg name="port" default="/dev/power"/>
   <!--sim args-->
   <arg name="world_name" default="$(find kani_gazebo)/world/iceira302.world"/>
   <!--arg name="world_name" default="$(find iceira_gazebo)/world/iceira_v3.world"/-->
 
   <group if="$(arg env)"><!--true, real-->
-    <include file="$(find kani_ros_control)/launch/kani_ros_control.launch">
-      <arg name="rvizconfig" value="$(arg rvizconfig)"/>
+   <!-- <include file="$(find kani_ros_control)/launch/kani_ros_control.launch">-->
+
+    <include file="$(find dynamixel_workbench_controllers)/launch/dynamixel_controllers.launch">
+    <arg name="usb_port" value="$(arg port)"/>
+<!--      <arg name="rvizconfig" value="$(arg rvizconfig)"/>
       <arg name="rviz" value="$(arg rviz)"/>
-      <arg name="rqt_steering" value="$(arg rqt_steering)"/>
+      <arg name="rqt_steering" value="$(arg rqt_steering)"/>-->
     </include>
     <group if="$(arg dual_scan)">
       <include file="$(find kani_sensors)/launch/rplidar.launch"/>

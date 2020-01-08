@@ -18,6 +18,19 @@
 #define _USEMATH_DEFINES
 #include "dynamixel_workbench_controllers/dynamixel_workbench_controllers.h"
 #include <math.h>
+#include <vector>
+#include "tf/tf.h"
+#include <tf/transform_broadcaster.h>
+#include "nav_msgs/Odometry.h"
+#include "geometry_msgs/Twist.h"
+#include "geometry_msgs/Pose.h"
+#include "geometry_msgs/PoseStamped.h"
+
+
+#define PI 3.14159265
+
+
+std::vector<double> current_pose (3); 
 
 DynamixelController::DynamixelController()
   :node_handle_(""),
@@ -29,6 +42,8 @@ DynamixelController::DynamixelController()
    wheel_separation_y_(0.0f),
    wheel_radius_(0.0f),
    is_moving_(false)
+   // odom_frame(std::string("odom")),
+   // base_link_frame(std::string("base_footprint"))
 {
   is_joint_state_topic_ = priv_node_handle_.param<bool>("use_joint_states_topic", true);
   is_cmd_vel_topic_ = priv_node_handle_.param<bool>("use_cmd_vel_topic", false);
@@ -37,6 +52,10 @@ DynamixelController::DynamixelController()
   read_period_ = priv_node_handle_.param<double>("dxl_read_period", 0.010f);
   write_period_ = priv_node_handle_.param<double>("dxl_write_period", 0.010f);
   pub_period_ = priv_node_handle_.param<double>("publish_period", 0.010f);
+
+  // Get frame_ids to use.
+  frame_id_odom = priv_node_handle_.param<std::string>("odom_frame", std::string("odom"));
+  frame_id_base_link = priv_node_handle_.param<std::string>("base_link_frame", std::string("base_footprint"));
 
   if (is_cmd_vel_topic_ == true)
   {
@@ -48,7 +67,24 @@ DynamixelController::DynamixelController()
   dxl_wb_ = new DynamixelWorkbench;
   jnt_tra_ = new JointTrajectory;
   jnt_tra_msg_ = new trajectory_msgs::JointTrajectory;
-}
+
+  // world coordinates
+  // current_pose(3);
+  // x, y, orientation
+
+
+  // relative coordinates
+  // std::vector<double> FR_vec[0, 0]; // x, y
+  // std::vector<double> FL_vec[0, 0];
+  // std::vector<double> RR_vec[0, 0];
+  // std::vector<double> RL_vec[0, 0];
+  ros::Time last_time_ = ros::Time::now();
+  ros::Time current_time_ = ros::Time::now();
+
+  current_pose.at(0) = 0;
+
+  current_pose.at(1) = 0;
+  current_pose.at(2) = 0;}
 
 DynamixelController::~DynamixelController(){}
 
@@ -238,6 +274,7 @@ bool DynamixelController::initSDKHandlers(void)
       ROS_ERROR("%s", log);
       return result;
     }
+   
   }
 
   return result;
@@ -319,12 +356,24 @@ bool DynamixelController::getPresentPosition(std::vector<std::string> dxl_name)
 void DynamixelController::initPublisher()
 {
   dynamixel_state_list_pub_ = priv_node_handle_.advertise<dynamixel_workbench_msgs::DynamixelStateList>("dynamixel_state", 100);
+  
+  //for odom->base_link transform
+  tf::TransformFloatData odom_broadcaster; //TransformBroadcaster -> TransformFloatData
+  geometry_msgs::TransformStamped odom_trans;
+
+
+  // std::string frame_id_odom;
+  // std::string frame_id_base_link;
+  // pose_pub = priv_node_handle_.advertise<nav_msgs::Odometry>("pose",1000);
+  // odom_tf_pub = priv_node_handle_.advertise<>
+
   if (is_joint_state_topic_) joint_states_pub_ = priv_node_handle_.advertise<sensor_msgs::JointState>("joint_states", 100);
 }
 
 void DynamixelController::initSubscriber()
 {
   trajectory_sub_ = priv_node_handle_.subscribe("joint_trajectory", 100, &DynamixelController::trajectoryMsgCallback, this);
+
   if (is_cmd_vel_topic_) cmd_vel_sub_ = node_handle_.subscribe("cmd_vel", 10, &DynamixelController::commandVelocityCallback, this);
 }
 
@@ -338,6 +387,9 @@ void DynamixelController::readCallback(const ros::TimerEvent&)
 #ifdef DEBUG
   static double priv_read_secs =ros::Time::now().toSec();
 #endif
+ 
+  // here to get encoder info
+
   bool result = false;
   const char* log = NULL;
 
@@ -454,14 +506,14 @@ void DynamixelController::readCallback(const ros::TimerEvent&)
   priv_read_secs = ros::Time::now().toSec();
 #endif
 }
-
+// here to publish odom
 void DynamixelController::publishCallback(const ros::TimerEvent&)
 {
 #ifdef DEBUG
   static double priv_pub_secs =ros::Time::now().toSec();
 #endif
   dynamixel_state_list_pub_.publish(dynamixel_state_list_);
-
+  // pose_pub.publish();  
   if (is_joint_state_topic_)
   {
     joint_state_msg_.header.stamp = ros::Time::now();
@@ -472,6 +524,10 @@ void DynamixelController::publishCallback(const ros::TimerEvent&)
     joint_state_msg_.effort.clear();
 
     uint8_t id_cnt = 0;
+    double vel[4] = {0,0,0,0};
+    double theta[4] = {0,0,0,0};
+
+    // here to read encoder
     for (auto const& dxl:dynamixel_)
     {
       double position = 0.0;
@@ -489,16 +545,68 @@ void DynamixelController::publishCallback(const ros::TimerEvent&)
 
       velocity = dxl_wb_->convertValue2Velocity((uint8_t)dxl.second, (int32_t)dynamixel_state_list_.dynamixel_state[id_cnt].present_velocity);
       position = dxl_wb_->convertValue2Radian((uint8_t)dxl.second, (int32_t)dynamixel_state_list_.dynamixel_state[id_cnt].present_position);
-
       joint_state_msg_.effort.push_back(effort);
       joint_state_msg_.velocity.push_back(velocity);
       joint_state_msg_.position.push_back(position);
 
+      if(id_cnt < 4)
+      {
+        vel[id_cnt] = velocity;
+        ROS_INFO("velocity : id %d ,%lf",id_cnt, vel[id_cnt]);
+      }
+      else {
+        theta[id_cnt - 4] = position;
+        ROS_INFO("position : id %d ,%lf",id_cnt, theta[id_cnt - 4]);
+      
+      }
       id_cnt++;
     }
-
-    joint_states_pub_.publish(joint_state_msg_);
   }
+
+  // ROS_INFO("")
+  double dt = current_time_.toSec() - last_time_.toSec();
+  // double & x = current_pose[0];
+  // double & y = current_pose[1];
+  // double & w = current_pose[2];
+
+  // compute x, y, z by integration
+
+  // FR_vec[0] = vel[0]*cos(theta[0]); num 1 5 
+  // FR_vec[1] = vel[0]*sin(theta[0]);
+  // FL_vec[0] = vel[1]*cos(theta[1]); num 2 6
+  // FL_vec[1] = vel[1]*sin(theta[1]);
+  // RR_vec[0] = vel[2]*cos(theta[2]); num 3 7
+  // RR_vec[1] = vel[2]*sin(theta[2]);
+  // RL_vec[0] = vel[3]*cos(theta[3]); num 4 8
+  // RL_vec[1] = vel[3]*sin(theta[3]);
+
+  // average vectors
+  ROS_INFO("x, y, w : %lf, %lf, %lf", current_pose.at(0), current_pose.at(1), current_pose.at(2));
+  ROS_INFO("publishing odom");
+
+  current_pose.at(0) += (vel[0]*cos(theta[0] * PI / 180.0) + vel[1]*cos(theta[1] * PI / 180.0) + vel[2]*cos(theta[2] * PI / 180.0) + vel[3]*cos(theta[3] * PI / 180.0)) * dt; // dx
+  current_pose.at(1) += (vel[0]*sin(theta[0] * PI / 180.0) + vel[1]*sin(theta[1] * PI / 180.0) + vel[2]*sin(theta[2] * PI / 180.0) + vel[3]*sin(theta[3] * PI / 180.0)) * dt; // dy
+  current_pose.at(2) += 0;//dw;
+  
+  // publish tf
+  // publishing transform odom->base_link
+
+  ROS_INFO("publishing odom2");
+  current_time_ = ros::Time::now();
+  odom_trans.header.stamp = current_time_;
+  odom_trans.header.frame_id = frame_id_odom;
+  odom_trans.child_frame_id = frame_id_base_link;
+  
+  odom_trans.transform.translation.x = current_pose.at(0)/1000.0;
+  odom_trans.transform.translation.y = current_pose.at(1)/1000.0;
+  odom_trans.transform.translation.z = 0.0;
+  odom_trans.transform.rotation = tf::createQuaternionMsgFromYaw(current_pose.at(2)*M_PI/180.0);
+  
+  odom_broadcaster.sendTransform(odom_trans);
+  last_time_ = current_time_;
+  joint_states_pub_.publish(joint_state_msg_);
+
+
 
 #ifdef DEBUG
   ROS_WARN("[publishCallback] diff_secs : %f", ros::Time::now().toSec() - priv_pub_secs);
@@ -508,26 +616,41 @@ void DynamixelController::publishCallback(const ros::TimerEvent&)
 
 void DynamixelController::commandVelocityCallback(const geometry_msgs::Twist::ConstPtr &msg)
 {
+
+
+  // cmd_vel 往 x 但是 實際往 y
   bool result = false;
+  bool result1 = false;
   const char* log = NULL;
 
   double wheel_velocity[dynamixel_.size()];
-  double wheel_angle[dynamixel_.size()];
   int32_t dynamixel_velocity[dynamixel_.size()];
 
+  double theta[dynamixel_.size()];  //theta of Vy and Vx
+  double wheel_angle[dynamixel_.size()]; //actual angle of motor
+  int32_t dynamixel_position[dynamixel_.size()];  //actual value for motor(0~4095)
   //const uint8_t LEFT = 0;
   //const uint8_t RIGHT = 1;
 
-  const uint8_t power1 = 0;
-  const uint8_t power2 = 1;
-  const uint8_t power3 = 2;
-  const uint8_t power4 = 3;
+  const uint8_t power1 = 1;
+  const uint8_t power2 = 3;
+  const uint8_t power3 = 0;
+  const uint8_t power4 = 2;
+  const uint8_t steer1 = 6;
+  const uint8_t steer2 = 7;
+  const uint8_t steer3 = 4;
+  const uint8_t steer4 = 5;
 
   double robot_lin_vel_x = msg->linear.x;
   double robot_lin_vel_y = msg->linear.y;
   double robot_ang_vel = msg->angular.z;
 
-  uint8_t id_array[dynamixel_.size()];
+  // ROS_INFO("")
+
+  // uint8_t id_array[dynamixel_.size()];
+
+  uint8_t id_array_power[4];
+  uint8_t id_array_steer[4];
   uint8_t id_cnt = 0;
 
   float rpm = 0.0;
@@ -535,7 +658,13 @@ void DynamixelController::commandVelocityCallback(const geometry_msgs::Twist::Co
   {
     const ModelInfo *modelInfo = dxl_wb_->getModelInfo((uint8_t)dxl.second);
     rpm = modelInfo->rpm;
-    id_array[id_cnt++] = (uint8_t)dxl.second;
+    if(id_cnt < 4){
+      id_array_power[id_cnt++] = (uint8_t)dxl.second;
+    }
+    else{
+      id_array_steer[id_cnt - 4] = (uint8_t)dxl.second;
+      id_cnt++;
+    }
   }
 
 //  V = r * w = r * (RPM * 0.10472) (Change rad/sec to RPM)
@@ -554,7 +683,7 @@ void DynamixelController::commandVelocityCallback(const geometry_msgs::Twist::Co
   D=robot_lin_vel_y+(robot_ang_vel*wheel_separation_x_/2);
 
   wheel_velocity[power1] = sqrt(C*C+B*B); 
-  wheel_velocity[power2] = sqrt(B*B+D*D);
+  wheel_velocity[power2] = sqrt(B*B+D*D); 
   wheel_velocity[power3] = sqrt(A*A+C*C); 
   wheel_velocity[power4] = sqrt(A*A+D*D);
 
@@ -565,7 +694,7 @@ void DynamixelController::commandVelocityCallback(const geometry_msgs::Twist::Co
 
   if (dxl_wb_->getProtocolVersion() == 2.0f)
   {
-    if (strcmp(dxl_wb_->getModelName(id_array[0]), "XL-320") == 0)
+    if (strcmp(dxl_wb_->getModelName(id_array_power[0]), "XL-320") == 0)
     {/*
       if (wheel_velocity[LEFT] == 0.0f) dynamixel_velocity[LEFT] = 0;
       else if (wheel_velocity[LEFT] < 0.0f) dynamixel_velocity[LEFT] = ((-1.0f) * wheel_velocity[LEFT]) * velocity_constant_value + 1023;
@@ -577,21 +706,28 @@ void DynamixelController::commandVelocityCallback(const geometry_msgs::Twist::Co
     }
     else
     {
-      dynamixel_velocity[power1]  = -wheel_velocity[power1] * velocity_constant_value;
-      dynamixel_velocity[power2] = wheel_velocity[power2] * velocity_constant_value;
-      dynamixel_velocity[power3]  = -wheel_velocity[power3] * velocity_constant_value;
-      dynamixel_velocity[power4] = wheel_velocity[power4] * velocity_constant_value;
+      dynamixel_velocity[power1]  = wheel_velocity[power1] * velocity_constant_value;
+      dynamixel_velocity[power2] = -wheel_velocity[power2] * velocity_constant_value;
+      dynamixel_velocity[power3]  = wheel_velocity[power3] * velocity_constant_value;
+      dynamixel_velocity[power4] = -wheel_velocity[power4] * velocity_constant_value;
       for (int i = 0; i<=3; i++)
       {
         if (wheel_angle[i]>0.5*M_PI)
         {
           dynamixel_velocity[i] = -dynamixel_velocity[i];
+          wheel_angle[i] = wheel_angle[i]-M_PI;
         }
         else if (wheel_angle[i]<-0.5*M_PI)
         {
           dynamixel_velocity[i] = -dynamixel_velocity[i];
+          wheel_angle[i] = wheel_angle[i]+M_PI;
         }
       }
+
+      dynamixel_position[0] = dxl_wb_->convertRadian2Value(id_array_steer[0], wheel_angle[0]);
+      dynamixel_position[1] = dxl_wb_->convertRadian2Value(id_array_steer[1], wheel_angle[1]);
+      dynamixel_position[2] = dxl_wb_->convertRadian2Value(id_array_steer[2], wheel_angle[2]);
+      dynamixel_position[3] = dxl_wb_->convertRadian2Value(id_array_steer[3], wheel_angle[3]);
 
     }
   }
@@ -606,8 +742,16 @@ void DynamixelController::commandVelocityCallback(const geometry_msgs::Twist::Co
     else if (wheel_velocity[RIGHT] > 0.0f)  dynamixel_velocity[RIGHT] = (wheel_velocity[RIGHT] * velocity_constant_value);*/
   }
 
-  result = dxl_wb_->syncWrite(SYNC_WRITE_HANDLER_FOR_GOAL_VELOCITY, id_array, dynamixel_.size(), dynamixel_velocity, 1, &log);
+  result = dxl_wb_->syncWrite(SYNC_WRITE_HANDLER_FOR_GOAL_VELOCITY, id_array_power, 4, dynamixel_velocity, 1, &log);
   if (result == false)
+  {
+    ROS_ERROR("%s", log);
+  }
+  log = NULL;
+
+  // error add second syncwrite
+  result1 = dxl_wb_->syncWrite(SYNC_WRITE_HANDLER_FOR_GOAL_POSITION, id_array_steer, 4, dynamixel_position, 1, &log);
+  if (result1 == false)
   {
     ROS_ERROR("%s", log);
   }
@@ -806,7 +950,12 @@ int main(int argc, char **argv)
   ros::NodeHandle node_handle("");
 
   std::string port_name = "/dev/power";
+  // std::string 
   uint32_t baud_rate = 57600;
+  nav_msgs::Odometry position;
+
+
+  // std::string frame_id_odom;
 
   if (argc < 2)
   {
@@ -824,6 +973,8 @@ int main(int argc, char **argv)
   bool result = false;
 
   std::string yaml_file = node_handle.param<std::string>("dynamixel_info", "");
+
+ // std::string frame_id_odom = node_handle.param<std::string>("odom_frame", std::string("odom"));
 
   result = dynamixel_controller.initWorkbench(port_name, baud_rate);
   if (result == false)
@@ -867,13 +1018,13 @@ int main(int argc, char **argv)
     return 0;
   }
 
-  //dynamixel_controller.initPublisher();
+  dynamixel_controller.initPublisher();
   dynamixel_controller.initSubscriber();
   //dynamixel_controller.initServer();
 
-  //ros::Timer read_timer = node_handle.createTimer(ros::Duration(dynamixel_controller.getReadPeriod()), &DynamixelController::readCallback, &dynamixel_controller);
-  //ros::Timer write_timer = node_handle.createTimer(ros::Duration(dynamixel_controller.getWritePeriod()), &DynamixelController::writeCallback, &dynamixel_controller);
-  //ros::Timer publish_timer = node_handle.createTimer(ros::Duration(dynamixel_controller.getPublishPeriod()), &DynamixelController::publishCallback, &dynamixel_controller);
+  ros::Timer read_timer = node_handle.createTimer(ros::Duration(dynamixel_controller.getReadPeriod()), &DynamixelController::readCallback, &dynamixel_controller);
+  ros::Timer write_timer = node_handle.createTimer(ros::Duration(dynamixel_controller.getWritePeriod()), &DynamixelController::writeCallback, &dynamixel_controller);
+  ros::Timer publish_timer = node_handle.createTimer(ros::Duration(dynamixel_controller.getPublishPeriod()), &DynamixelController::publishCallback, &dynamixel_controller);
 
   ros::spin();
 

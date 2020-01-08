@@ -21,6 +21,8 @@
 
 #include <ros/ros.h>
 
+#include <tf/transform_broadcaster.h>
+#include "geometry_msgs/PoseStamped.h"
 #include <yaml-cpp/yaml.h>
 
 #include <sensor_msgs/JointState.h>
@@ -61,6 +63,12 @@ class DynamixelController
   // ROS Topic Publisher
   ros::Publisher dynamixel_state_list_pub_;
   ros::Publisher joint_states_pub_;
+  
+
+
+  // odom publisher
+  ros::Publisher pose_pub;
+
 
   // ROS Topic Subscriber
   ros::Subscriber cmd_vel_sub_;
@@ -86,6 +94,22 @@ class DynamixelController
   bool is_joint_state_topic_;
   bool is_cmd_vel_topic_;
   bool use_moveit_;
+  
+  //for odom->base_link transform
+  tf::TransformBroadcaster odom_broadcaster;
+  geometry_msgs::TransformStamped odom_trans;
+  std::string frame_id_odom;
+  std::string frame_id_base_link;
+    // relative coordinates
+  std::vector<double> FR_vec[2]; // x, y
+  std::vector<double> FL_vec[2];
+  std::vector<double> RR_vec[2];
+  std::vector<double> RL_vec[2];
+
+  double vel[4] = {0,0,0,0};
+  double theta[4] = {0,0,0,0};
+  ros::Time last_time_;
+  ros::Time current_time_;
 
   double wheel_separation_x_;
   double wheel_separation_y_;
