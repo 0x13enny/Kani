@@ -573,16 +573,16 @@ void DynamixelController::publishCallback(const ros::TimerEvent&)
   double th = -theta[3];
   double phi = -theta[2];
 
+  current_pose.at(0) += (dx_p * cos(current_pose.at(2)) - dy_p * sin(current_pose.at(2))) * dt; // dx
+  current_pose.at(1) += (dx_p * sin(current_pose.at(2)) + dy_p * cos(current_pose.at(2))) * dt; // dy
+
+
   if (fabs(th - phi) > 0.0001){
   double swerve_radius_x = (tan(phi) * wheel_separation_x_/2 - tan(th) * wheel_separation_x_/2)/(tan(phi) - tan(th)) ;
   double swerve_radius = sqrt(pow(swerve_radius_x,2) + pow(tan(phi) * (swerve_radius_x + wheel_separation_x_/2) + wheel_separation_y_/2 ,2));
   double w = sqrt(pow(dx_p,2) + pow(dy_p,2)) / swerve_radius;// V / R = omega // sqrt((dx_p)^2 + (dy_p)^2) / R 
-  }
-  current_pose.at(0) += (dx_p * cos(current_pose.at(2)) - dy_p * sin(current_pose.at(2))) * dt; // dx
-  current_pose.at(1) += (dx_p * sin(current_pose.at(2)) + dy_p * cos(current_pose.at(2))) * dt; // dy
   current_pose.at(2) += w * dt;//d omega;
-
-
+  }
 
   if (current_pose.at(2) > 2 * PI){
   current_pose.at(2) -= 2 * PI;
