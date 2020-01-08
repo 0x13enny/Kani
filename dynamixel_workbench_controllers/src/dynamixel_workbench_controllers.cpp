@@ -638,8 +638,8 @@ void DynamixelController::commandVelocityCallback(const geometry_msgs::Twist::Co
   const uint8_t power4 = 2;
   const uint8_t steer1 = 6;
   const uint8_t steer2 = 7;
-  const uint8_t steer3 = 4;
-  const uint8_t steer4 = 5;
+  const uint8_t steer3 = 5;
+  const uint8_t steer4 = 4;
 
   double robot_lin_vel_x = msg->linear.x;
   double robot_lin_vel_y = msg->linear.y;
@@ -681,16 +681,34 @@ void DynamixelController::commandVelocityCallback(const geometry_msgs::Twist::Co
   B=robot_lin_vel_x+(robot_ang_vel*wheel_separation_y_/2);
   C=robot_lin_vel_y-(robot_ang_vel*wheel_separation_x_/2);
   D=robot_lin_vel_y+(robot_ang_vel*wheel_separation_x_/2);
+if(fabs(robot_lin_vel_x)>0.001))
 
-  wheel_velocity[power1] = sqrt(C*C+B*B); 
-  wheel_velocity[power2] = sqrt(B*B+D*D); 
-  wheel_velocity[power3] = sqrt(A*A+C*C); 
-  wheel_velocity[power4] = sqrt(A*A+D*D);
+{
+  const double vel_steering_offset = (robot_ang_vel*wheel_separation_y_/2);
+  const double sign=copysign
 
-  wheel_angle[0]=atan2(B,C);
-  wheel_angle[1]=atan2(B,D);
-  wheel_angle[2]=atan2(A,C);
-  wheel_angle[3]=atan2(A,D);
+  wheel_velocity[power1] = sqrt(C*C+A*A); 
+  wheel_velocity[power2] = sqrt(C*C+B*B); 
+  wheel_velocity[power3] = sqrt(D*D+A*A); 
+  wheel_velocity[power4] = sqrt(D*D+B*B);
+
+  wheel_angle[0]=atan2(C,A);//--DB
+  wheel_angle[1]=atan2(C,B);//+-CB
+  wheel_angle[2]=atan2(D,A);//-+DA
+  wheel_angle[3]=atan2(D,B);//++CA
+
+ //if(abs(robot_ang_vel*wheel_separation_y_/2)>=0.001)
+
+ /* {wheel_velocity[power1] = sqrt(C*C+A*A); 
+  wheel_velocity[power2] = sqrt(D*D+A*A); 
+  wheel_velocity[power3] = sqrt(C*C+B*B); 
+  wheel_velocity[power4] = sqrt(B*B+D*D);
+
+  wheel_angle[0]=atan2(D,B);//--DB
+  wheel_angle[1]=atan2(C,B);//+-CB
+  wheel_angle[2]=atan2(D,A);//-+DA
+  wheel_angle[3]=atan2(C,A);//++CA
+ }*/
 
   if (dxl_wb_->getProtocolVersion() == 2.0f)
   {
@@ -706,10 +724,18 @@ void DynamixelController::commandVelocityCallback(const geometry_msgs::Twist::Co
     }
     else
     {
+     //if(fabs(2.0*robot_lin_vel_x)>=abs(robot_ang_vel*wheel_separation_y_/2))
       dynamixel_velocity[power1]  = wheel_velocity[power1] * velocity_constant_value;
       dynamixel_velocity[power2] = -wheel_velocity[power2] * velocity_constant_value;
       dynamixel_velocity[power3]  = wheel_velocity[power3] * velocity_constant_value;
       dynamixel_velocity[power4] = -wheel_velocity[power4] * velocity_constant_value;
+     /*if(abs(robot_ang_vel*wheel_separation_y_)/2>=0.001)
+     {
+      dynamixel_velocity[power1]  = -wheel_velocity[power1] * velocity_constant_value;
+      dynamixel_velocity[power2] = wheel_velocity[power2] * velocity_constant_value;
+      dynamixel_velocity[power3]  = -wheel_velocity[power3] * velocity_constant_value;
+      dynamixel_velocity[power4] = wheel_velocity[power4] * velocity_constant_value;
+	}*/
       for (int i = 0; i<=3; i++)
       {
         if (wheel_angle[i]>0.5*M_PI)
@@ -722,12 +748,13 @@ void DynamixelController::commandVelocityCallback(const geometry_msgs::Twist::Co
           dynamixel_velocity[i] = -dynamixel_velocity[i];
           wheel_angle[i] = wheel_angle[i]+M_PI;
         }
+
       }
 
-      dynamixel_position[0] = dxl_wb_->convertRadian2Value(id_array_steer[0], wheel_angle[0]);
-      dynamixel_position[1] = dxl_wb_->convertRadian2Value(id_array_steer[1], wheel_angle[1]);
-      dynamixel_position[2] = dxl_wb_->convertRadian2Value(id_array_steer[2], wheel_angle[2]);
-      dynamixel_position[3] = dxl_wb_->convertRadian2Value(id_array_steer[3], wheel_angle[3]);
+      dynamixel_position[steer1-4] = dxl_wb_->convertRadian2Value(id_array_steer[0], wheel_angle[0]);
+      dynamixel_position[steer2-4] = dxl_wb_->convertRadian2Value(id_array_steer[1], wheel_angle[1]);
+      dynamixel_position[steer3-4] = dxl_wb_->convertRadian2Value(id_array_steer[2], wheel_angle[2]);
+      dynamixel_position[steer4-4] = dxl_wb_->convertRadian2Value(id_array_steer[3], wheel_angle[3]);
 
     }
   }
