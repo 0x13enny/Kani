@@ -102,8 +102,8 @@ class DynamixelController
   std::string frame_id_base_link;
 
 
-  float vel[4] = {0,0,0,0};
-  float theta[4] = {0,0,0,0};
+  double vel[4] = {0,0,0,0};
+  double theta[4] = {0,0,0,0};
   ros::Time last_time_;
   ros::Time current_time_;
   double last_phi;

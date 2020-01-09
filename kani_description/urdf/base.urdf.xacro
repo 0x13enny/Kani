@@ -69,7 +69,7 @@
       <origin xyz="0.110 0.0 0.02" rpy="0 0 0"/>
     </sensor_d435>
     <sensor_a1 parent="base_link" name="laser">
-      <origin xyz="0.02 0.03 0.02" rpy="0 0 0"/>
+      <origin xyz="0.02 0.03 0.02" rpy="0 0 ${-pi/2}"/>
     </sensor_a1>
 
     <!-- Extensions -->

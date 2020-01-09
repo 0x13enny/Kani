@@ -581,20 +581,20 @@ void DynamixelController::publishCallback(const ros::TimerEvent&)
 
   // angular tangent 報掉 x, y 慢慢積分
   // average vectors
-  ROS_INFO("x, y, w : %f, %f, %f", current_pose.at(0), current_pose.at(1), current_pose.at(2));
+  ROS_INFO("x, y, w : %lf, %lf, %lf", current_pose.at(0), current_pose.at(1), current_pose.at(2));
   ROS_INFO("publishing odom");
-  float dx_p = (vel[0]*cos(theta[0]) + vel[1]*cos(theta[1]) + vel[2]*cos(theta[2]) + vel[3]*cos(theta[3]))/4;
-  float dy_p = (vel[0]*sin(theta[0]) + vel[1]*sin(theta[1]) + vel[2]*sin(theta[2]) + vel[3]*sin(theta[3]))/4;
-  float th = -theta[3];
-  float phi = -theta[2];
-  ROS_INFO("dx_p, dy_p : %f, %f",dx_p, dy_p);
-
+  double dx_p = (vel[0]*cos(theta[0]) + vel[1]*cos(theta[1]) + vel[2]*cos(theta[2]) + vel[3]*cos(theta[3]))/4;
+  double dy_p = (vel[0]*sin(theta[0]) + vel[1]*sin(theta[1]) + vel[2]*sin(theta[2]) + vel[3]*sin(theta[3]))/4;
+  double th = -theta[3];
+  double phi = -theta[2];
+  ROS_INFO("dx_p, dy_p, dt: %lf, %lf, %lf",dx_p, dy_p, dt);
+  ROS_INFO("cos sin : %lf , %lf", cos(current_pose.at(2)), sin(current_pose.at(2)));
   current_pose.at(0) += (dx_p * cos(current_pose.at(2)) - dy_p * sin(current_pose.at(2))) * dt; // dx
   current_pose.at(1) += (dx_p * sin(current_pose.at(2)) + dy_p * cos(current_pose.at(2))) * dt; // dy
 
 
-  ROS_INFO("phi, theta : %f, %f",phi, theta);
-  if (fabs(th - phi) > 0.001 && fabs(th-last_th) > 0.05 && fabs(phi - last_phi) > 0.05 && fabs(turning[1]) < 0.01){
+  ROS_INFO("phi, theta : %f, %f",phi, th);
+  if (fabs(th - phi) > 0.001 && fabs(th-last_th) > 0.1 && fabs(phi - last_phi) > 0.1 && fabs(turning[1]) < 0.01){
     double swerve_radius_x = (tan(phi) * wheel_separation_x_/2 - tan(th) * wheel_separation_x_/2)/(tan(phi) - tan(th)) ;
 
     ROS_INFO("R : %lf", swerve_radius_x);
