@@ -27,7 +27,7 @@
     <!--decise global/local planner-->
     <param name="planner_frequency" value="1.0" />
     <param name="planner_patience" value="5.0" />
-    <param name="controller_frequency" value="5.0"/>
+    <param name="controller_frequency" value="20.0"/>
     <param name="controller_patience" value="15.0" />
     <param name="base_global_planner" value="$(arg base_global_planner)"/>
     <param name="base_local_planner" value="$(arg base_local_planner)"/>

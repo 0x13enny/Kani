@@ -1,42 +1,39 @@
-<?xml version="1.0"?>
 <launch>
   <!--Argument in this launch file-->
   <arg name="rqt_steering" default="false"/>
   <arg name="rviz" default="false"/>
   <arg name="model" default="$(find kani_description)/robots/kani.urdf.xacro"/>
 
-  <!-- Controller config for simulation -->
-  <arg name="sim_controllers_config" default="$(find kani_ros_control)/config/kani_ros_control_sim.yaml"/>
   
   <arg name="rvizconfig" default="$(find kani_ros_control)/rviz/kani.rviz" />
 
   <!-- Convert an xacro and put on parameter server-->
   <param name="robot_description" command="$(find xacro)/xacro $(arg model)" />
-  <arg name="usb_port_steer"                default="/dev/steer"/>
-  <arg name="dxl_baud_rate_steer"           default="115200"/>
+  <arg name="port"                default="/dev/ttyUSB0"/>
+  <arg name="baud_rate"           default="57600"/>
   <arg name="namespace"               default="dynamixel_workbench"/>
   <arg name="use_moveit"              default="false"/>
   <arg name="use_joint_state"         default="true"/>
   <arg name="use_cmd_vel"             default="true"/>
  
 
+  <!-- Load controller parameters -->
+  <param name="dynamixel_info"          value="$(find kani_ros_control)/config/kani_motors_config.yaml"/>
 
-  <!-- start four_wheel_steering -->
+  <node name="power" pkg="dynamixel_workbench_controllers" type="dynamixel_workbench_controllers"
+        required="true" output="screen" args="$(arg port) $(arg baud_rate)">
+    <param name="use_moveit"              value="$(arg use_moveit)"/>
+    <param name="use_joint_states_topic"  value="$(arg use_joint_state)"/>
+    <param name="use_cmd_vel_topic"       value="$(arg use_cmd_vel)"/>
+    <param name="hardware_setup"          value="$(find kani_ros_control)/config/hardware_config.yaml"/>
 
-  <!--    <include file="$(find dynamixel_workbench_controllers)/launch/dynamixel_controllers_steer.launch"/>-->
+  </node>
 
-   <include file="$(find dynamixel_workbench_controllers)/launch/dynamixel_controllers.launch"/>
-
-  <!--Load controller parameter for simulation-->
-  <rosparam command="load" file="$(arg sim_controllers_config)"/>
 
   <!--Spawn Controller-->
   <!--<node name="four_wheel_controller_spawner" pkg="controller_manager" type="spawner"
     args="kani_joint_state_publisher
 	  kani_steering_controller"/> -->
- 
-
-
 
   <!--Main control launch file-->
   <!--  <include file="$(find kani_ros_control)/launch/dynamixel_controllers.launch" />
@@ -46,7 +43,7 @@
     respawn="false" output="screen">
   </node>
 
-<node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" ></node>
+<node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" ></node> 
 
   <!--Gui steering console (Optional)-->
   <group if="$(arg rqt_steering)">

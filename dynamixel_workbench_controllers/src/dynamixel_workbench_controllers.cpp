@@ -72,12 +72,6 @@ DynamixelController::DynamixelController()
   // current_pose(3);
   // x, y, orientation
 
-
-  // relative coordinates
-  // std::vector<double> FR_vec[0, 0]; // x, y
-  // std::vector<double> FL_vec[0, 0];
-  // std::vector<double> RR_vec[0, 0];
-  // std::vector<double> RL_vec[0, 0];
   ros::Time last_time_ = ros::Time::now();
   ros::Time current_time_ = ros::Time::now();
 
@@ -373,7 +367,7 @@ void DynamixelController::initSubscriber()
 {
   trajectory_sub_ = priv_node_handle_.subscribe("joint_trajectory", 100, &DynamixelController::trajectoryMsgCallback, this);
 
-  if (is_cmd_vel_topic_) cmd_vel_sub_ = node_handle_.subscribe("cmd_vel", 10, &DynamixelController::commandVelocityCallback, this);
+  if (is_cmd_vel_topic_) cmd_vel_sub_ = node_handle_.subscribe("/kani_steering_controller/cmd_vel", 10, &DynamixelController::commandVelocityCallback, this);
 }
 
 void DynamixelController::initServer()
@@ -505,6 +499,8 @@ void DynamixelController::readCallback(const ros::TimerEvent&)
   priv_read_secs = ros::Time::now().toSec();
 #endif
 }
+
+
 // here to publish odom
 void DynamixelController::publishCallback(const ros::TimerEvent&)
 {
@@ -513,6 +509,12 @@ void DynamixelController::publishCallback(const ros::TimerEvent&)
 #endif
   dynamixel_state_list_pub_.publish(dynamixel_state_list_);
   // pose_pub.publish();  
+
+  double vel[4] = {0,0,0,0};
+  double theta[4] = {0,0,0,0};
+  double turning[4] = {0,0,0,0};
+  bool filter_flag = false;
+  current_time_ = ros::Time::now();
   if (is_joint_state_topic_)
   {
     joint_state_msg_.header.stamp = ros::Time::now();
@@ -523,8 +525,6 @@ void DynamixelController::publishCallback(const ros::TimerEvent&)
     joint_state_msg_.effort.clear();
 
     uint8_t id_cnt = 0;
-    double vel[4] = {0,0,0,0};
-    double theta[4] = {0,0,0,0};
 
     // here to read encoder
     for (auto const& dxl:dynamixel_)
@@ -550,38 +550,61 @@ void DynamixelController::publishCallback(const ros::TimerEvent&)
 
       if(id_cnt < 4)
       {
-        vel[id_cnt] = velocity * wheel_radius_;
-        ROS_INFO("velocity : id %d ,%lf",id_cnt, vel[id_cnt]);
+        if (id_cnt == 2 || id_cnt == 3){
+        vel[id_cnt] = (double)(-velocity * wheel_radius_);
+        ROS_INFO("velocity : id %d ,%f",id_cnt, vel[id_cnt]);
+          
+        }
+        else{
+        vel[id_cnt] = (double)(velocity * wheel_radius_);
+        ROS_INFO("velocity : id %d ,%f",id_cnt, vel[id_cnt]);
+        }
       }
       else {
         theta[id_cnt - 4] = position;
-        ROS_INFO("position : id %d ,%lf",id_cnt, theta[id_cnt - 4]);
+        turning[id_cnt - 4] = velocity;
+        ROS_INFO("position : id %d ,%f",id_cnt, theta[id_cnt - 4]);
       
+        ROS_INFO("turning : id %d ,%f",id_cnt, velocity);
       }
       id_cnt++;
     }
+
+  
   }
+  float dt = current_time_.toSec() - last_time_.toSec();
+  // ROS_INFO("dt %f",dt);
+  // ROS_INFO("current %lf",current_time_.toSec());
+  // ROS_INFO("last %lf",last_time_.toSec());
+  // ROS_INFO("sub : %lf",current_time_.toSec() - last_time_.toSec());
+  
 
-  double dt = current_time_.toSec() - last_time_.toSec();
-
-
+  // angular tangent 報掉 x, y 慢慢積分
   // average vectors
-  ROS_INFO("x, y, w : %lf, %lf, %lf", current_pose.at(0), current_pose.at(1), current_pose.at(2));
+  ROS_INFO("x, y, w : %f, %f, %f", current_pose.at(0), current_pose.at(1), current_pose.at(2));
   ROS_INFO("publishing odom");
-  double dx_p = (vel[0]*cos(theta[0] * PI / 180.0) + vel[1]*cos(theta[1] * PI / 180.0) + vel[2]*cos(theta[2] * PI / 180.0) + vel[3]*cos(theta[3] * PI / 180.0));
-  double dy_p = (vel[0]*sin(theta[0] * PI / 180.0) + vel[1]*sin(theta[1] * PI / 180.0) + vel[2]*sin(theta[2] * PI / 180.0) + vel[3]*sin(theta[3] * PI / 180.0));
-  double th = -theta[3];
-  double phi = -theta[2];
+  float dx_p = (vel[0]*cos(theta[0]) + vel[1]*cos(theta[1]) + vel[2]*cos(theta[2]) + vel[3]*cos(theta[3]))/4;
+  float dy_p = (vel[0]*sin(theta[0]) + vel[1]*sin(theta[1]) + vel[2]*sin(theta[2]) + vel[3]*sin(theta[3]))/4;
+  float th = -theta[3];
+  float phi = -theta[2];
+  ROS_INFO("dx_p, dy_p : %f, %f",dx_p, dy_p);
 
   current_pose.at(0) += (dx_p * cos(current_pose.at(2)) - dy_p * sin(current_pose.at(2))) * dt; // dx
   current_pose.at(1) += (dx_p * sin(current_pose.at(2)) + dy_p * cos(current_pose.at(2))) * dt; // dy
 
 
-  if (fabs(th - phi) > 0.0001){
-  double swerve_radius_x = (tan(phi) * wheel_separation_x_/2 - tan(th) * wheel_separation_x_/2)/(tan(phi) - tan(th)) ;
-  double swerve_radius = sqrt(pow(swerve_radius_x,2) + pow(tan(phi) * (swerve_radius_x + wheel_separation_x_/2) + wheel_separation_y_/2 ,2));
-  double w = sqrt(pow(dx_p,2) + pow(dy_p,2)) / swerve_radius;// V / R = omega // sqrt((dx_p)^2 + (dy_p)^2) / R 
-  current_pose.at(2) += w * dt;//d omega;
+  ROS_INFO("phi, theta : %f, %f",phi, theta);
+  if (fabs(th - phi) > 0.001 && fabs(th-last_th) > 0.05 && fabs(phi - last_phi) > 0.05 && fabs(turning[1]) < 0.01){
+    double swerve_radius_x = (tan(phi) * wheel_separation_x_/2 - tan(th) * wheel_separation_x_/2)/(tan(phi) - tan(th)) ;
+
+    ROS_INFO("R : %lf", swerve_radius_x);
+    double swerve_radius = sqrt(pow(swerve_radius_x,2) + pow(tan(phi) * (swerve_radius_x + wheel_separation_x_/2) + wheel_separation_y_/2 ,2));
+    double w = sqrt(pow(dx_p,2) + pow(dy_p,2)) / swerve_radius;// V / R = omega // sqrt((dx_p)^2 + (dy_p)^2) / R 
+    current_pose.at(2) += w * dt;//d omega;
+    last_th = th;
+    last_phi = phi;
+
+  ROS_INFO("w : %lf", w);
   }
 
   if (current_pose.at(2) > 2 * PI){
@@ -595,13 +618,12 @@ void DynamixelController::publishCallback(const ros::TimerEvent&)
 
   // publishing transform odom->base_link
 
-  current_time_ = ros::Time::now();
   odom_trans.header.stamp = current_time_;
   odom_trans.header.frame_id = frame_id_odom;
   odom_trans.child_frame_id = frame_id_base_link;
   
-  odom_trans.transform.translation.x = current_pose.at(0)/1000.0;
-  odom_trans.transform.translation.y = current_pose.at(1)/1000.0;
+  odom_trans.transform.translation.x = current_pose.at(0);
+  odom_trans.transform.translation.y = current_pose.at(1);
   odom_trans.transform.translation.z = 0.0;
   odom_trans.transform.rotation = tf::createQuaternionMsgFromYaw(current_pose.at(2)*M_PI/180.0);
   

@@ -80,8 +80,8 @@ int main(int argc, char **argv)
   ros::init(argc, argv, "wheel_operator");
   ros::NodeHandle node_handle("");
 
-  double lin_vel_step = 0.1;
-  double ang_vel_step = 0.1;
+  double lin_vel_step = 0.01;
+  double ang_vel_step = 0.01;
 
 
   ROS_INFO("You can set '-lin_vel_step' and '-ang_vel_step' arguments (default is 0.01 and 0.1)");
@@ -116,7 +116,7 @@ int main(int argc, char **argv)
 
   ROS_INFO("%s", msg.c_str());
 
-  ros::Rate loop_rate(100);
+  ros::Rate loop_rate(10);
 
   while(ros::ok())
   {

@@ -100,16 +100,14 @@ class DynamixelController
   geometry_msgs::TransformStamped odom_trans;
   std::string frame_id_odom;
   std::string frame_id_base_link;
-    // relative coordinates
-  std::vector<double> FR_vec[2]; // x, y
-  std::vector<double> FL_vec[2];
-  std::vector<double> RR_vec[2];
-  std::vector<double> RL_vec[2];
 
-  double vel[4] = {0,0,0,0};
-  double theta[4] = {0,0,0,0};
+
+  float vel[4] = {0,0,0,0};
+  float theta[4] = {0,0,0,0};
   ros::Time last_time_;
   ros::Time current_time_;
+  double last_phi;
+  double last_th;
 
   double wheel_separation_x_;
   double wheel_separation_y_;
