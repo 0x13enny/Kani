@@ -4,7 +4,7 @@
   <arg name="env" default="false"/><!--real=true sim=false-->
   <arg name="dual_scan" default="false"/>
   <arg name="rvizconfig" default="$(find kani_navigation)/rviz/kani.rviz"/>
-  <arg name="rviz" default="false"/>
+  <arg name="rviz" default="true"/>
   <arg name="rqt_steering" default="true"/>
   <arg name="no_static_map" default="true"/>
   <arg name="usb_port" default="/dev/power"/>
@@ -41,5 +41,7 @@
   <node name="reset_costmap_node" pkg="teb_local_planner_optimal" type="reset_costmap"
     respawn="true" output="screen">
   </node>
+
+
 
 </launch>

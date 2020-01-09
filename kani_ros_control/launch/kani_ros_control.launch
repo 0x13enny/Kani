@@ -1,7 +1,7 @@
 <launch>
   <!--Argument in this launch file-->
   <arg name="rqt_steering" default="false"/>
-  <arg name="rviz" default="false"/>
+  <arg name="rviz" default="true"/>
   <arg name="model" default="$(find kani_description)/robots/kani.urdf.xacro"/>
 
   
@@ -25,7 +25,16 @@
     <param name="use_moveit"              value="$(arg use_moveit)"/>
     <param name="use_joint_states_topic"  value="$(arg use_joint_state)"/>
     <param name="use_cmd_vel_topic"       value="$(arg use_cmd_vel)"/>
-    <param name="hardware_setup"          value="$(find kani_ros_control)/config/hardware_config.yaml"/>
+        <rosparam>
+      publish_period: 0.010
+      dxl_read_period: 0.010
+      dxl_write_period: 0.010
+      <!-- set if use_cmd_vel is true -->
+      mobile_robot_config:
+        seperation_between_wheels_x: 0.160
+        seperation_between_wheels_y: 0.2
+        radius_of_wheel: 0.033
+    </rosparam>
 
   </node>
 

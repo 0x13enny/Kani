@@ -21,8 +21,8 @@
   <arg name="base_local_planner" default="teb_local_planner/TebLocalPlannerROS" if="$(eval choose_local == 3)"/>
   <!--arg name="base_local_planner" default="teb_local_planner/TebLocalPlannerROS" if="$(eval choose_local == 3)"/-->
   <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
-    <remap from="cmd_vel" to="/kani_steering_controller/cmd_vel"/>
-    <remap from="odom" to="/kani_steering_controller/odom"/>
+    <remap from="cmd_vel" to="/cmd_vel"/>
+    <remap from="odom" to="/odom"/>
 
     <!--decise global/local planner-->
     <param name="planner_frequency" value="1.0" />

@@ -367,7 +367,7 @@ void DynamixelController::initSubscriber()
 {
   trajectory_sub_ = priv_node_handle_.subscribe("joint_trajectory", 100, &DynamixelController::trajectoryMsgCallback, this);
 
-  if (is_cmd_vel_topic_) cmd_vel_sub_ = node_handle_.subscribe("/kani_steering_controller/cmd_vel", 10, &DynamixelController::commandVelocityCallback, this);
+  if (is_cmd_vel_topic_) cmd_vel_sub_ = node_handle_.subscribe("/cmd_vel", 10, &DynamixelController::commandVelocityCallback, this);
 }
 
 void DynamixelController::initServer()
