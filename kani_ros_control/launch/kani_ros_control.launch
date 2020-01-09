@@ -25,6 +25,7 @@
     <param name="use_moveit"              value="$(arg use_moveit)"/>
     <param name="use_joint_states_topic"  value="$(arg use_joint_state)"/>
     <param name="use_cmd_vel_topic"       value="$(arg use_cmd_vel)"/>
+<<<<<<< HEAD
         <rosparam>
       publish_period: 0.010
       dxl_read_period: 0.010
@@ -36,6 +37,9 @@
         radius_of_wheel: 0.033
     </rosparam>
 
+=======
+    <param name="hardware_setup"          value="$(find kani_ros_control)/config/hardware_config.yaml"/>
+>>>>>>> 4a9698269e536a40677cf1f224c729cda84c8493
   </node>
 
 
@@ -48,8 +52,8 @@
   <!--  <include file="$(find kani_ros_control)/launch/dynamixel_controllers.launch" />
 -->
   <!--Publish robot state-->
-  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"
-    respawn="false" output="screen">
+  <!--node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"
+    respawn="false" output="screen"-->
   </node>
 
 <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" ></node> 
