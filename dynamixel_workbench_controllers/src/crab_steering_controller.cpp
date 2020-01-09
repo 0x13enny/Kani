@@ -711,17 +711,21 @@ void DynamixelController::commandVelocityCallback(const geometry_msgs::Twist::Co
   const double vel_steering_offset = 0;
   const double sign=copysign(1.0,robot_lin_vel_x);
 
+
   wheel_velocity[power1] = sqrt(C*C+B*B); 
-  wheel_velocity[power2] = sqrt(B*B+D*D); 
+  wheel_velocity[power2] = sqrt(B*B+D*D);
   wheel_velocity[power3] = sqrt(A*A+C*C); 
   wheel_velocity[power4] = sqrt(A*A+D*D);
+
+  wheel_angle[0]=atan2(B,C);
+  wheel_angle[1]=atan2(B,D);
+  wheel_angle[2]=atan2(A,C);
+  wheel_angle[3]=atan2(A,D);
+
  
-  wheel_angle[0]=atan2(C,A);//--DB
-  wheel_angle[1]=atan2(C,B);//+-CB
-  wheel_angle[2]=atan2(D,A);//-+DA
-  wheel_angle[3]=atan2(D,B);//++CA
- 
-  if (dxl_wb_->getProtocolVersion() == 2.0f)
+
+
+ if (dxl_wb_->getProtocolVersion() == 2.0f)
   {
     if (strcmp(dxl_wb_->getModelName(id_array_power[0]), "XL-320") == 0)
     {/*
@@ -734,18 +738,13 @@ void DynamixelController::commandVelocityCallback(const geometry_msgs::Twist::Co
     }
     else
     {
-     //if(fabs(2.0*robot_lin_vel_x)>=abs(robot_ang_vel*wheel_separation_y_/2))
+
       dynamixel_velocity[power1]  = wheel_velocity[power1] * velocity_constant_value;
       dynamixel_velocity[power2] = -wheel_velocity[power2] * velocity_constant_value;
       dynamixel_velocity[power3]  = wheel_velocity[power3] * velocity_constant_value;
       dynamixel_velocity[power4] = -wheel_velocity[power4] * velocity_constant_value;
-     /*if(abs(robot_ang_vel*wheel_separation_y_)/2>=0.001)
-     {
-      dynamixel_velocity[power1]  = -wheel_velocity[power1] * velocity_constant_value;
-      dynamixel_velocity[power2] = wheel_velocity[power2] * velocity_constant_value;
-      dynamixel_velocity[power3]  = -wheel_velocity[power3] * velocity_constant_value;
-      dynamixel_velocity[power4] = wheel_velocity[power4] * velocity_constant_value;
-	}*/
+
+
       for (int i = 0; i<=3; i++)
       {
         if (wheel_angle[i]>0.5*M_PI)
