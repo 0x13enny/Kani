@@ -731,9 +731,9 @@ else if(fabs(robot_lin_vel_x)>0.001)
     {
      //if(fabs(2.0*robot_lin_vel_x)>=abs(robot_ang_vel*wheel_separation_y_/2))
       dynamixel_velocity[power1]  = wheel_velocity[power1] * velocity_constant_value;
-      dynamixel_velocity[power2] = wheel_velocity[power2] * velocity_constant_value;
+      dynamixel_velocity[power2] = -wheel_velocity[power2] * velocity_constant_value;
       dynamixel_velocity[power3]  = wheel_velocity[power3] * velocity_constant_value;
-      dynamixel_velocity[power4] = wheel_velocity[power4] * velocity_constant_value;
+      dynamixel_velocity[power4] = -wheel_velocity[power4] * velocity_constant_value;
      /*if(abs(robot_ang_vel*wheel_separation_y_)/2>=0.001)
      {
       dynamixel_velocity[power1]  = -wheel_velocity[power1] * velocity_constant_value;
