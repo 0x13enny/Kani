@@ -707,9 +707,9 @@ void DynamixelController::commandVelocityCallback(const geometry_msgs::Twist::Co
   C=robot_lin_vel_y-(robot_ang_vel*wheel_separation_x_/2);
   D=robot_lin_vel_y+(robot_ang_vel*wheel_separation_x_/2);
   //Compute wheels velocities
-if(fabs(robot_lin_vel_x)>0.001)
+ if(fabs(robot_lin_vel_x)>0.001)
 
-{
+ {
   const double vel_steering_offset = 0;
   const double sign=copysign(1.0,robot_lin_vel_x);
 
@@ -725,7 +725,7 @@ if(fabs(robot_lin_vel_x)>0.001)
   wheel_velocity[power4] = sign * std::hypot((robot_lin_vel_x+ robot_ang_vel*wheel_separation_x_/2),
                                             (wheel_separation_y_*robot_ang_vel/2.0)) 
                           + vel_steering_offset; 
-}
+ }
 // Compute steering angles
 if(fabs(2.0*robot_lin_vel_x) > fabs(robot_ang_vel*wheel_separation_x_))
  { wheel_angle[0]=atan((robot_ang_vel*wheel_separation_x_)/ (2.0*robot_lin_vel_x- robot_ang_vel*wheel_separation_x_));//--DB
@@ -767,7 +767,7 @@ else if(fabs(robot_lin_vel_x)>0.001)
       dynamixel_velocity[power4] = wheel_velocity[power4] * velocity_constant_value;
 	}*/
       /*for (int i = 0; i<=3; i++)
-      {
+      {\
         if (wheel_angle[i]>0.5*M_PI)
         {
           dynamixel_velocity[i] = -dynamixel_velocity[i];
